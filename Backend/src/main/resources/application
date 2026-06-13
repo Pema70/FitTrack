@@ -1,0 +1,47 @@
+server:
+  port: 8080
+  # Aplikacja Android (emulator) łączy się przez http://10.0.2.2:8080
+
+spring:
+  application:
+    name: fittrack-backend
+
+  # SQLite — plik bazy w katalogu roboczym
+  datasource:
+    url: jdbc:sqlite:fittrack.db
+    driver-class-name: org.sqlite.JDBC
+    username: ""
+    password: ""
+
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update        # automatycznie tworzy/aktualizuje tabele przy starcie
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+# JWT
+fittrack:
+  jwt:
+    secret: "ZmlsdHJhY2tfc2VjcmV0X2tleV9kbHpfZ2VuZXJhdGVfcG9wcm93bmllX2tsdWN6X3NlY3JldGFybnlfMjU2X2JpdF9zZWNyZXQ="
+    # Domyślne czasy w milisekundach: access 1h, refresh 30 dni
+    access-token-expiration-ms: 3600000
+    refresh-token-expiration-ms: 2592000000
+
+# OpenAPI / Swagger UI → http://localhost:8080/swagger-ui.html
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    org.hibernate.SQL: INFO
+    org.springframework.security: INFO
+    com.fittrack: DEBUG
