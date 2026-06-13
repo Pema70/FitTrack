@@ -1,19 +1,26 @@
 # FitTrack Backend
 
-Spring Boot 3 + Kotlin + JPA + SQLite + JWT.
+Spring Boot 3 + Kotlin + JPA + PostgreSQL + JWT.
 
 ## Wymagania
-- JDK 17+
-- (Gradle wrapper jest w repo — nie trzeba własnego Gradle)
+-JDK 17+
+-Zainstalowany PostgreSQL oraz narzędzie pgAdmin
+-Utworzona czysta baza danych w PostgreSQL o nazwie fittrack
+-(Gradle wrapper jest w repo — nie trzeba własnego Gradle)
 
 ## Uruchomienie
 
+1. Upewnij się, że Twój serwer PostgreSQL działa.
+2. Otwórz pgAdmin i utwórz bazę danych o nazwie fittrack.
+3. W razie potrzeby zaktualizuj dane logowania do bazy (host, user, password) w pliku src/main/resources/application.yml.
+4. Uruchom aplikację:
 ```bash
 cd backend
 ./gradlew bootRun
 ```
 
-Aplikacja startuje na **http://localhost:8080**. Plik bazy `fittrack.db` zostaje utworzony w katalogu uruchomienia.
+Podczas pierwszego startu Flyway automatycznie utworzy historię migracji i postawi strukturę tabel na podstawie skryptów migracyjnych. Aplikacja startuje na 
+http://localhost:8080.
 
 ### Z aplikacji Android (emulator)
 Bazowy URL `http://10.0.2.2:8080/` jest już skonfigurowany w `android/app/build.gradle.kts` (`BuildConfig.API_BASE_URL`).
@@ -52,13 +59,24 @@ Swagger UI: **http://localhost:8080/swagger-ui.html**
 
 ## Konfiguracja
 
-`src/main/resources/application.yml`:
-- port 8080
-- SQLite w pliku `fittrack.db`
-- JWT: access 1 h, refresh 30 dni (secret w `fittrack.jwt.secret`)
+`src/main/resources/application.yml:`
+port: 8080
+database: PostgreSQL (domyślnie jdbc:postgresql://localhost:5432/fittrack)
+orm: Hibernate z walidacją struktury bazy (spring.jpa.hibernate.ddl-auto=validate)
+migration: Flyway automatycznie zarządzający schematem bazy danych
+JWT: access 1 h, refresh 30 dni (secret w fittrack.jwt.secret)
 
 ## Czyszczenie bazy
-```bash
-rm backend/fittrack.db
+1. W środowisku produkcyjnym/deweloperskim z PostgreSQL nie usuwamy pliku bazy danych. Aby wyczyścić bazę do stanu początkowego:
+
+2. Otwórz pgAdmin.
+
+3. Kliknij prawym przyciskiem myszy na bazę fittrack i wybierz Query Tool.
+
+4. Wykonaj polecenie czyszczące schemat (uwaga: usuwa wszystkie dane!):
+```SQL
+    DROP SCHEMA public CASCADE;
+    CREATE SCHEMA public;
 ```
-Tabele zostaną odtworzone przy następnym starcie (`spring.jpa.hibernate.ddl-auto=update`).
+
+5. Uruchom aplikację ponownie – Flyway automatycznie zaaplikuje wszystkie migracje strukturalne (np. V1__init_schema.sql) na czystym schemacie.
