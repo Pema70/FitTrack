@@ -25,6 +25,16 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
+    //Postgress
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
+    implementation("org.postgresql:postgresql:42.7.2")
+    
+    // Biblioteka JetBrains Exposed (Core oraz DAO lub Oridnal)
+    implementation("org.jetbrains.exposed:exposed-core:0.50.0")
+    implementation("org.jetbrains.exposed:exposed-dao:0.50.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.50.0")
+
     // Kotlin
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
