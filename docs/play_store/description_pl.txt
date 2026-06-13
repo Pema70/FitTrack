@@ -1,0 +1,35 @@
+FitTrack – Twój codzienny towarzysz zdrowia i fitnessu
+
+Śledź kalorie, rejestruj treningi i odkrywaj niskokaloryczne przepisy — wszystko w jednej aplikacji zaprojektowanej na Androida.
+
+GŁÓWNE FUNKCJE:
+
+📊 LICZNIK KALORII I ODŻYWIANIA
+• Szybkie dodawanie posiłków do dziennika
+• Pamiętnik zdjęć posiłków z aparatu telefonu
+• Automatyczne obliczanie kalorii i makroskładników (białko, tłuszcze, węglowodany)
+• Przeglądanie historii po dniach za pomocą kalendarza lub strzałek
+
+🏋️ DZIENNIK TRENINGÓW
+• Wybieraj spośród 10+ aktywności: bieganie, siłownia, rower, pływanie i inne
+• Automatyczne obliczanie spalonych kalorii na podstawie czasu i wagi
+• Ręczne wpisanie wartości ze smartwatcha lub zegarka sportowego
+
+🍽️ PRZEPISY NISKOKALORYCZNE
+• Przeglądaj bazę przepisów
+• Filtruj według kaloryczności i składników
+• Dodawaj, edytuj i usuwaj własne przepisy
+• Zapisuj ulubione przepisy dla szybkiego dostępu
+
+👤 SPERSONALIZOWANY PROFIL
+• Podaj swój wiek, płeć, wagę i wzrost
+• Automatyczne obliczanie dziennego celu kalorycznego (BMR/TDEE wg wzoru Mifflina–St Jeora)
+
+🔔 POWIADOMIENIA I TRYB OFFLINE
+• Przypomnienia o nawodnieniu przez cały dzień
+• Pełna funkcjonalność bez dostępu do internetu
+
+PRYWATNOŚĆ I BEZPIECZEŃSTWO
+Hasła są przechowywane przy użyciu hashowania BCrypt. Wszystkie dane są przesyłane przez HTTPS. Twoje dane należą do Ciebie.
+
+Pobierz FitTrack już dziś i rozpocznij swoją podróż do zdrowszego stylu życia!

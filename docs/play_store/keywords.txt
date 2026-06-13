@@ -1,0 +1,3 @@
+licznik kalorii,kalorie,dieta,odchudzanie,dziennik żywieniowy,zdrowe odżywianie,makroskładniki,BMI,BMR,TDEE,przepisy niskokaloryczne,
+trening,dziennik treningów,fitness,siłownia,bieganie,aktywność fizyczna,nawodnienie,zdrowie,waga,calorie counter,
+calorie tracker,diet,weight loss,food diary,nutrition,macro,workout tracker,gym,running,exercise log,hydration,health
