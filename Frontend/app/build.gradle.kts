@@ -31,6 +31,7 @@ android {
 
         buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/api/\"")
 
+        testInstrumentationRunner = "com.fittrack.ui.HiltTestRunner"
 
     }
 
@@ -47,7 +48,17 @@ android {
 
     kotlinOptions { jvmTarget = "17" }
 
-
+    sourceSets {
+        getByName("main") {
+            java.srcDirs("src/main/kotlin")
+        }
+        getByName("test") {
+            java.srcDirs("src/test/java", "src/test/kotlin")
+        }
+        getByName("androidTest") {
+            java.srcDirs("src/androidTest/java", "src/androidTest/kotlin")
+        }
+    }
 
     packaging {
         resources.excludes += setOf(
@@ -129,7 +140,22 @@ dependencies {
     // Java time desugaring (potrzebne na minSdk 26 — choć 26+ ma native java.time, biblioteka jest nieszkodliwa)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
+    // Testy
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:5.3.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
 
+    // UI testy (Espresso)
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:core:1.5.0")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.5.1")
+    debugImplementation ("androidx.fragment:fragment-testing:1.6.1")
+    androidTestImplementation ("com.google.dagger:hilt-android-testing:2.48")
+    kaptAndroidTest ("com.google.dagger:hilt-compiler:2.48")
 }
 
 kapt {
