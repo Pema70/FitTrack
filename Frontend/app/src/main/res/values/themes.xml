@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.FitTrack" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Kolory główne -->
+        <item name="colorPrimary">@color/accent_green</item>
+        <item name="colorPrimaryVariant">@color/accent_green_dark</item>
+        <item name="colorOnPrimary">@color/bg_dark</item>
+
+        <!-- Tło -->
+        <item name="android:colorBackground">@color/bg_dark</item>
+        <item name="colorSurface">@color/bg_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+
+        <!-- Błędy -->
+        <item name="colorError">@color/error</item>
+
+        <!-- Styl przycisków globalnie -->
+        <item name="materialButtonStyle">@style/Widget.FitTrack.Button</item>
+
+        <!-- Styl pól tekstowych -->
+        <item name="textInputStyle">@style/Widget.FitTrack.TextInput</item>
+    </style>
+
+    <!-- Pill button -->
+    <style name="Widget.FitTrack.Button" parent="Widget.Material3.Button">
+        <item name="cornerRadius">50dp</item>
+        <item name="backgroundTint">@color/accent_green</item>
+        <item name="android:textColor">@color/bg_dark</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+    </style>
+
+    <!-- Pole tekstowe z ciemnym tłem -->
+    <style name="Widget.FitTrack.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/accent_green</item>
+        <item name="hintTextColor">@color/text_secondary</item>
+        <item name="boxBackgroundColor">@color/bg_card</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.FitTrack.RoundedInput</item>
+    </style>
+
+    <!-- Zaokrąglone rogi pól -->
+    <style name="ShapeAppearance.FitTrack.RoundedInput" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+</resources>

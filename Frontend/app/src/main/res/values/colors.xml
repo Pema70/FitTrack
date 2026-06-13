@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tła -->
+    <color name="bg_dark">#0F0F0F</color>
+    <color name="bg_surface">#1A1A1A</color>
+    <color name="bg_card">#242424</color>
+
+    <!-- Akcent — zielony neonowy (pasuje do fitness) -->
+    <color name="accent_green">#00E676</color>
+    <color name="accent_green_dark">#00C853</color>
+
+    <!-- Tekst -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#9E9E9E</color>
+
+    <!-- Inne -->
+    <color name="error">#FF5252</color>
+    <color name="divider">#2C2C2C</color>
+</resources>

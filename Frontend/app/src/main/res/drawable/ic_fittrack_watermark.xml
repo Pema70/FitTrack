@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="280"
+    android:viewportHeight="280">
+
+    <!-- Zewnętrzny okrąg -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#00E676"
+        android:strokeWidth="4"
+        android:pathData="M140,8 C212,8 272,68 272,140 C272,212 212,272 140,272 C68,272 8,212 8,140 C8,68 68,8 140,8 Z"/>
+
+    <!-- Wewnętrzny okrąg -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#00E676"
+        android:strokeWidth="2"
+        android:pathData="M140,28 C201,28 252,79 252,140 C252,201 201,252 140,252 C79,252 28,201 28,140 C28,79 79,28 140,28 Z"/>
+
+    <!-- Litera F -->
+    <path
+        android:fillColor="#00E676"
+        android:pathData="
+            M90,100 L90,180
+            L102,180 L102,148
+            L128,148 L128,137
+            L102,137 L102,111
+            L132,111 L132,100 Z"/>
+
+    <!-- Litera T -->
+    <path
+        android:fillColor="#00E676"
+        android:pathData="
+            M148,100 L148,111
+            L168,111 L168,180
+            L180,180 L180,111
+            L200,111 L200,100 Z"/>
+
+</vector>
