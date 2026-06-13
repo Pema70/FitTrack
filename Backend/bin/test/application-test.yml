@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:fittrack;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+    show-sql: false
+
+fittrack:
+  jwt:
+    # Base64 z 32-bajtowego sekretu testowego (HS256 wymaga >=256 bitow)
+    secret: dGVzdHRlc3R0ZXN0dGVzdHRlc3R0ZXN0dGVzdHRlc3Q=
+    access-token-expiration-ms: 3600000
+    refresh-token-expiration-ms: 2592000000
+
+logging:
+  level:
+    org.hibernate: WARN
+    org.springframework: WARN
