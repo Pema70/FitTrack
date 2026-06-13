@@ -1,6 +1,6 @@
 # Changelog
 
-## Wersja 1.0.0 (2025-06-01) – Pierwsze wydanie
+## Wersja 1.0.0 – Pierwsze wydanie
 
 ### Nowe funkcje
 - Rejestracja i logowanie użytkownika (e-mail + hasło, JWT)
@@ -13,7 +13,7 @@
 - Zakładka „Moje przepisy" i „Ulubione"
 - Dziennik treningów: wybór aktywności (bieganie, siłownia, rower i inne), automatyczne przeliczanie spalonych kalorii
 - Możliwość ręcznego wpisania spalonych kalorii (np. ze smartwatcha)
-- Ekran profilu: uzupełnianie danych (waga, wzrost, wiek, płeć, cel sylwetkowy), automatyczne obliczanie BMR/TDEE (wzór Mifflina–St Jeora)
+- Ekran profilu: dane użytkownika (waga, wzrost, wiek, płeć, cel sylwetkowy), automatyczne obliczanie BMR/TDEE (wzór Mifflina–St Jeora)
 - Tryb offline-first: dostęp do danych bez połączenia z internetem (Room/SQLite)
 - Powiadomienia push z przypomnieniami o nawodnieniu (WorkManager)
 - Dokumentowanie posiłków za pomocą aparatu (Camera API)

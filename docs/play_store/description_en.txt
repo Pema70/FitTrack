@@ -1,0 +1,35 @@
+FitTrack – Your Daily Health & Fitness Companion
+
+Track your calories, log your workouts, and discover low-calorie recipes — all in one app designed for Android.
+
+KEY FEATURES:
+
+📊 CALORIE & NUTRITION TRACKER
+• Add meals quickly and easily
+• Photo diary using your phone's camera
+• Automatic calorie and macro calculation (protein, fats, carbs)
+• View history by day using a calendar or arrows
+
+🏋️ WORKOUT DIARY
+• Choose from 10+ activities: running, gym, cycling, swimming and more
+• Auto-calculate burned calories based on duration and your weight
+• Manual calorie entry from your smartwatch or sports device
+
+🍽️ LOW-CALORIE RECIPES
+• Browse a curated recipe database
+• Filter by calories and ingredients
+• Add, edit and delete your own recipes
+• Save favourites for quick access
+
+👤 PERSONALIZED PROFILE
+• Enter your age, gender, weight and height
+• Automatic daily calorie goal calculation (BMR/TDEE via Mifflin–St Jeor)
+
+🔔 NOTIFICATIONS & OFFLINE MODE
+• Hydration reminders throughout the day
+• Full functionality even without internet connection
+
+PRIVACY & SECURITY
+Passwords are stored using BCrypt hashing. All data is transmitted over HTTPS. Your data belongs to you.
+
+Download FitTrack today and start your journey to a healthier lifestyle!
