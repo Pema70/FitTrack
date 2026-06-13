@@ -1,0 +1,46 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: fittrack-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fittrack
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: DryDurags24
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+fittrack:
+  jwt:
+    secret: "ZmlsdHJhY2tfc2VjcmV0X2tleV9kbHpfZ2VuZXJhdGVfcG9wcm93bmllX2tsdWN6X3NlY3JldGFybnlfMjU2X2JpdF9zZWNyZXQ="
+    access-token-expiration-ms: 3600000
+    refresh-token-expiration-ms: 2592000000
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    org.hibernate.SQL: INFO
+    org.springframework.security: INFO
+    com.fittrack: DEBUG

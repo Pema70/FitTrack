@@ -1,0 +1,194 @@
+package com.fittrack.service
+
+import com.fittrack.dto.RecipeIngredientRequest
+import com.fittrack.dto.RecipeRequest
+import com.fittrack.entity.FavoriteRecipe
+import com.fittrack.entity.FoodProduct
+import com.fittrack.entity.Recipe
+import com.fittrack.entity.User
+import com.fittrack.repository.FavoriteRecipeRepository
+import com.fittrack.repository.FoodProductRepository
+import com.fittrack.repository.RecipeRepository
+import com.fittrack.repository.UserRepository
+import io.mockk.*
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import java.math.BigDecimal
+import java.util.Optional
+
+class RecipeServiceTest {
+
+    private val userRepo: UserRepository = mockk()
+    private val recipeRepo: RecipeRepository = mockk()
+    private val foodRepo: FoodProductRepository = mockk()
+    private val favoriteRepo: FavoriteRecipeRepository = mockk()
+    private val service = RecipeService(userRepo, recipeRepo, foodRepo, favoriteRepo)
+
+    @Test
+    fun `oblicza wartosci odzywcze na porcje podczas tworzenia przepisu`() {
+        val u = User(id = 1, email = "u@fittrack.pl", password = "x")
+        every { userRepo.findByEmail("u@fittrack.pl") } returns Optional.of(u)
+        every { foodRepo.findById(1) } returns Optional.of(FoodProduct(
+            id=1, name="Ryz",
+            kcalPer100g = BigDecimal("130"),
+            proteinG    = BigDecimal("2.7"),
+            fatG        = BigDecimal("0.3"),
+            carbsG      = BigDecimal("28")
+        ))
+        val slot = slot<Recipe>()
+        every { recipeRepo.save(capture(slot)) } answers { slot.captured.apply { id = 50 } }
+
+        val resp = service.create("u@fittrack.pl", RecipeRequest(
+            title = "Ryz na sniadanie",
+            description = "Szybki posiłek",
+            imageUrl = null,
+            prepTimeMin = 15,
+            servings = 2,
+            isPublic = true,
+            tags = mutableSetOf("wege"),
+            ingredients = listOf(RecipeIngredientRequest(productId = 1, quantityG = BigDecimal("200"), unit = "g"))
+        ))
+        // 200g ryżu to 2 * 130 = 260 kcal. Na 2 porcje to 130 kcal/porcję.
+        assertEquals(0, BigDecimal("130").compareTo(resp.kcalPerServing))
+        assertEquals("Ryz na sniadanie", resp.title)
+    }
+
+    @Test
+    fun `search bez tagu wola searchPublic`() {
+        every { recipeRepo.searchPublic("kurczak") } returns emptyList()
+        val results = service.search("kurczak", null)
+        assertTrue(results.isEmpty())
+        verify { recipeRepo.searchPublic("kurczak") }
+    }
+
+    @Test
+    fun `search z tagiem wola findPublicByTag`() {
+        every { recipeRepo.findPublicByTag("wege") } returns emptyList()
+        service.search("", "wege")
+        verify { recipeRepo.findPublicByTag("wege") }
+    }
+
+    @Test
+    fun `getMine zwraca przepisy autora`() {
+        val u = User(id = 1, email = "u@fittrack.pl", password = "x")
+        every { userRepo.findByEmail("u@fittrack.pl") } returns Optional.of(u)
+        val recipe = Recipe(id = 10, author = u, title = "Moj przepis", servings = 1)
+        every { recipeRepo.findAllByAuthorId(1) } returns listOf(recipe)
+
+        val results = service.getMine("u@fittrack.pl")
+        
+        assertEquals(1, results.size)
+        assertEquals("Moj przepis", results[0].title)
+    }
+
+    @Test
+    fun `addFavorite dodaje przepis do ulubionych gdy go tam nie ma`() {
+        val u = User(id = 1, email = "u@fittrack.pl", password = "x")
+        val recipe = Recipe(id = 99, author = u, title = "Test", servings = 1)
+        
+        every { userRepo.findByEmail("u@fittrack.pl") } returns Optional.of(u)
+        every { favoriteRepo.existsByUserIdAndRecipeId(1, 99) } returns false
+        every { recipeRepo.findById(99) } returns Optional.of(recipe)
+        every { favoriteRepo.save(any()) } returns FavoriteRecipe(user = u, recipe = recipe)
+
+        assertDoesNotThrow { service.addFavorite("u@fittrack.pl", 99) }
+        verify(exactly = 1) { favoriteRepo.save(any()) }
+    }
+
+    @Test
+    fun `removeFavorite usuwa przepis z ulubionych`() {
+        val u = User(id = 1, email = "u@fittrack.pl", password = "x")
+        val recipe = Recipe(id = 99, author = u, title = "Test", servings = 1)
+        val favorite = FavoriteRecipe(id = 5, user = u, recipe = recipe)
+
+        every { userRepo.findByEmail("u@fittrack.pl") } returns Optional.of(u)
+        every { favoriteRepo.findByUserIdAndRecipeId(1, 99) } returns Optional.of(favorite)
+        every { favoriteRepo.delete(favorite) } returns Unit
+
+        assertDoesNotThrow { service.removeFavorite("u@fittrack.pl", 99) }
+        verify(exactly = 1) { favoriteRepo.delete(favorite) }
+    }
+
+    @Test
+    fun `update modyfikuje przepis i przelicza makro`() {
+        val u = User(id = 1, email = "u@fittrack.pl", password = "x")
+        every { userRepo.findByEmail("u@fittrack.pl") } returns Optional.of(u)
+        
+        val recipe = Recipe(id = 10, author = u, title = "Stary tytul", servings = 1)
+        every { recipeRepo.findById(10) } returns Optional.of(recipe)
+        
+        every { foodRepo.findById(1) } returns Optional.of(FoodProduct(
+            id=1, name="Ryz", kcalPer100g = BigDecimal("130"),
+            proteinG = BigDecimal.ZERO, fatG = BigDecimal.ZERO, carbsG = BigDecimal.ZERO
+        ))
+        
+        val slot = slot<Recipe>()
+        every { recipeRepo.save(capture(slot)) } answers { slot.captured }
+
+        val req = RecipeRequest(
+            title = "Nowy tytul",
+            description = "Opis",
+            imageUrl = null,
+            prepTimeMin = 20,
+            servings = 1,
+            isPublic = false,
+            tags = mutableSetOf("nowy_tag"),
+            ingredients = listOf(RecipeIngredientRequest(productId = 1, quantityG = BigDecimal("100"), unit = "g"))
+        )
+
+        val resp = service.update("u@fittrack.pl", 10, req)
+
+        assertEquals("Nowy tytul", resp.title)
+        assertEquals(0, BigDecimal("130").compareTo(resp.kcalPerServing))
+        assertTrue(resp.tags.contains("nowy_tag"))
+    }
+
+    @Test
+    fun `update rzuca wyjatek gdy uzytkownik nie jest autorem`() {
+        val attacker = User(id = 1, email = "haker@fittrack.pl", password = "x")
+        val victim = User(id = 2, email = "ofiara@fittrack.pl", password = "y")
+        
+        every { userRepo.findByEmail("haker@fittrack.pl") } returns Optional.of(attacker)
+        
+        val recipe = Recipe(id = 10, author = victim, title = "Cudzy przepis", servings = 1)
+        every { recipeRepo.findById(10) } returns Optional.of(recipe)
+
+        val req = RecipeRequest("T", "D", null, 10, 1, true, mutableSetOf(), emptyList())
+
+        val exception = assertThrows<IllegalArgumentException> {
+            service.update("haker@fittrack.pl", 10, req)
+        }
+        assertEquals("Brak uprawnień — nie jesteś autorem przepisu", exception.message)
+    }
+
+    @Test
+    fun `delete usuwa przepis autoryzowanego uzytkownika`() {
+        val u = User(id = 1, email = "u@fittrack.pl", password = "x")
+        val recipe = Recipe(id = 10, author = u, title = "Moj przepis", servings = 1)
+        
+        every { userRepo.findByEmail("u@fittrack.pl") } returns Optional.of(u)
+        every { recipeRepo.findById(10) } returns Optional.of(recipe)
+        every { recipeRepo.delete(recipe) } returns Unit
+
+        assertDoesNotThrow { service.delete("u@fittrack.pl", 10) }
+        verify(exactly = 1) { recipeRepo.delete(recipe) }
+    }
+
+    @Test
+    fun `delete rzuca wyjatek gdy probujesz usunac cudzy przepis`() {
+        val attacker = User(id = 1, email = "haker@fittrack.pl", password = "x")
+        val victim = User(id = 2, email = "ofiara@fittrack.pl", password = "y")
+        
+        every { userRepo.findByEmail("haker@fittrack.pl") } returns Optional.of(attacker)
+        
+        val recipe = Recipe(id = 10, author = victim, title = "Cudzy przepis", servings = 1)
+        every { recipeRepo.findById(10) } returns Optional.of(recipe)
+
+        val exception = assertThrows<IllegalArgumentException> {
+            service.delete("haker@fittrack.pl", 10)
+        }
+        assertEquals("Brak uprawnień — nie jesteś autorem przepisu", exception.message)
+        verify(exactly = 0) { recipeRepo.delete(any()) }
+    }
+}

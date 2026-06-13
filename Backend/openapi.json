@@ -1,0 +1,956 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "FitTrack API",
+        "description": "Backend dla aplikacji FitTrack",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8081",
+            "description": "Generated server url"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Workout",
+            "description": "Treningi"
+        },
+        {
+            "name": "Diary",
+            "description": "Dziennik posi\u0142k\u00f3w i dzienne podsumowanie"
+        },
+        {
+            "name": "Recipes",
+            "description": "Niskokaloryczne przepisy"
+        },
+        {
+            "name": "Profile",
+            "description": "Profil u\u017cytkownika i kalkulacja kcal"
+        },
+        {
+            "name": "Auth",
+            "description": "Rejestracja, logowanie i od\u015bwie\u017canie token\u00f3w"
+        }
+    ],
+    "paths": {
+        "/api/profile": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Pobierz profil zalogowanego u\u017cytkownika",
+                "operationId": "get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProfileResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Aktualizuj profil i przelicz dzienny cel kcal (Mifflin\u2013St Jeor)",
+                "operationId": "update",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProfileUpdateRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProfileResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/workouts": {
+            "get": {
+                "tags": [
+                    "Workout"
+                ],
+                "summary": "Pobierz treningi dla podanej daty (domy\u015blnie dzi\u015b)",
+                "operationId": "getForDate",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/WorkoutResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Workout"
+                ],
+                "summary": "Dodaj wpis treningu",
+                "operationId": "log",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WorkoutRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WorkoutResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/recipes": {
+            "get": {
+                "tags": [
+                    "Recipes"
+                ],
+                "summary": "Wyszukaj przepisy (publiczne) po fragmencie nazwy i opcjonalnym tagu",
+                "operationId": "search",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    },
+                    {
+                        "name": "tag",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecipeResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Recipes"
+                ],
+                "summary": "Dodaj nowy przepis (wymaga JWT)",
+                "operationId": "create",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecipeRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecipeResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/diary": {
+            "get": {
+                "tags": [
+                    "Diary"
+                ],
+                "summary": "Pobierz wpisy na dany dzie\u0144",
+                "operationId": "getEntries",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DiaryEntryResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Diary"
+                ],
+                "summary": "Dodaj wpis do dziennika",
+                "operationId": "addEntry",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DiaryEntryRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiaryEntryResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Rejestracja nowego u\u017cytkownika",
+                "operationId": "register",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Od\u015bwie\u017c access token",
+                "operationId": "refresh",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RefreshRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logowanie",
+                "operationId": "login",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/diary/summary": {
+            "get": {
+                "tags": [
+                    "Diary"
+                ],
+                "summary": "Dzienne podsumowanie kcal",
+                "operationId": "summary",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DailySummaryResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/diary/{id}": {
+            "delete": {
+                "tags": [
+                    "Diary"
+                ],
+                "summary": "Usu\u0144 wpis (swipe-to-delete)",
+                "operationId": "deleteEntry",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ProfileUpdateRequest": {
+                "type": "object",
+                "properties": {
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "gender": {
+                        "type": "string"
+                    },
+                    "birthDate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "weightKg": {
+                        "type": "number"
+                    },
+                    "heightCm": {
+                        "type": "number"
+                    },
+                    "activityLevel": {
+                        "type": "string"
+                    },
+                    "goal": {
+                        "type": "string"
+                    },
+                    "avatarUrl": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ProfileResponse": {
+                "type": "object",
+                "properties": {
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "gender": {
+                        "type": "string"
+                    },
+                    "birthDate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "weightKg": {
+                        "type": "number"
+                    },
+                    "heightCm": {
+                        "type": "number"
+                    },
+                    "activityLevel": {
+                        "type": "string"
+                    },
+                    "goal": {
+                        "type": "string"
+                    },
+                    "dailyKcalGoal": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "avatarUrl": {
+                        "type": "string"
+                    }
+                }
+            },
+            "WorkoutRequest": {
+                "required": [
+                    "activityDate",
+                    "activityType",
+                    "durationMin",
+                    "kcalBurned"
+                ],
+                "type": "object",
+                "properties": {
+                    "activityDate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "activityType": {
+                        "type": "string"
+                    },
+                    "durationMin": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "kcalBurned": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "distanceKm": {
+                        "type": "number"
+                    },
+                    "avgHeartRate": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "notes": {
+                        "type": "string"
+                    }
+                }
+            },
+            "WorkoutResponse": {
+                "required": [
+                    "activityDate",
+                    "activityType",
+                    "durationMin",
+                    "id",
+                    "kcalBurned"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "activityDate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "activityType": {
+                        "type": "string"
+                    },
+                    "durationMin": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "kcalBurned": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "distanceKm": {
+                        "type": "number"
+                    },
+                    "notes": {
+                        "type": "string"
+                    }
+                }
+            },
+            "RecipeIngredientRequest": {
+                "required": [
+                    "productId",
+                    "quantityG"
+                ],
+                "type": "object",
+                "properties": {
+                    "productId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "quantityG": {
+                        "type": "number"
+                    },
+                    "unit": {
+                        "type": "string"
+                    }
+                }
+            },
+            "RecipeRequest": {
+                "required": [
+                    "ingredients",
+                    "isPublic",
+                    "prepTimeMin",
+                    "servings",
+                    "tags",
+                    "title"
+                ],
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "imageUrl": {
+                        "type": "string"
+                    },
+                    "prepTimeMin": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "servings": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "isPublic": {
+                        "type": "boolean"
+                    },
+                    "tags": {
+                        "uniqueItems": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "ingredients": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecipeIngredientRequest"
+                        }
+                    }
+                }
+            },
+            "RecipeResponse": {
+                "required": [
+                    "carbsG",
+                    "fatG",
+                    "id",
+                    "isPublic",
+                    "kcalPerServing",
+                    "prepTimeMin",
+                    "proteinG",
+                    "servings",
+                    "tags",
+                    "title"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "imageUrl": {
+                        "type": "string"
+                    },
+                    "prepTimeMin": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "servings": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "kcalPerServing": {
+                        "type": "number"
+                    },
+                    "proteinG": {
+                        "type": "number"
+                    },
+                    "fatG": {
+                        "type": "number"
+                    },
+                    "carbsG": {
+                        "type": "number"
+                    },
+                    "tags": {
+                        "uniqueItems": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "isPublic": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "DiaryEntryRequest": {
+                "required": [
+                    "entryDate",
+                    "mealType",
+                    "quantityG",
+                    "synced"
+                ],
+                "type": "object",
+                "properties": {
+                    "entryDate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "mealType": {
+                        "type": "string"
+                    },
+                    "productId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "recipeId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "customName": {
+                        "type": "string"
+                    },
+                    "quantityG": {
+                        "type": "number"
+                    },
+                    "photoPath": {
+                        "type": "string"
+                    },
+                    "note": {
+                        "type": "string"
+                    },
+                    "synced": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "DiaryEntryResponse": {
+                "required": [
+                    "carbsG",
+                    "entryDate",
+                    "fatG",
+                    "id",
+                    "kcal",
+                    "mealType",
+                    "proteinG",
+                    "quantityG"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "entryDate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "mealType": {
+                        "type": "string"
+                    },
+                    "productName": {
+                        "type": "string"
+                    },
+                    "quantityG": {
+                        "type": "number"
+                    },
+                    "kcal": {
+                        "type": "number"
+                    },
+                    "proteinG": {
+                        "type": "number"
+                    },
+                    "fatG": {
+                        "type": "number"
+                    },
+                    "carbsG": {
+                        "type": "number"
+                    },
+                    "photoPath": {
+                        "type": "string"
+                    },
+                    "note": {
+                        "type": "string"
+                    }
+                }
+            },
+            "RegisterRequest": {
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "maxLength": 100,
+                        "minLength": 6,
+                        "type": "string"
+                    }
+                }
+            },
+            "TokenResponse": {
+                "required": [
+                    "accessToken",
+                    "refreshToken",
+                    "tokenType"
+                ],
+                "type": "object",
+                "properties": {
+                    "accessToken": {
+                        "type": "string"
+                    },
+                    "refreshToken": {
+                        "type": "string"
+                    },
+                    "tokenType": {
+                        "type": "string"
+                    }
+                }
+            },
+            "RefreshRequest": {
+                "required": [
+                    "refreshToken"
+                ],
+                "type": "object",
+                "properties": {
+                    "refreshToken": {
+                        "type": "string"
+                    }
+                }
+            },
+            "LoginRequest": {
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DailySummaryResponse": {
+                "required": [
+                    "carbsG",
+                    "date",
+                    "fatG",
+                    "kcalBurned",
+                    "kcalConsumed",
+                    "kcalGoal",
+                    "kcalRemaining",
+                    "proteinG"
+                ],
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "kcalGoal": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "kcalConsumed": {
+                        "type": "number"
+                    },
+                    "kcalBurned": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "kcalRemaining": {
+                        "type": "number"
+                    },
+                    "proteinG": {
+                        "type": "number"
+                    },
+                    "fatG": {
+                        "type": "number"
+                    },
+                    "carbsG": {
+                        "type": "number"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}
