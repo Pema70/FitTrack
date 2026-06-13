@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/diaryFragment">
+
+    <!-- 1) Dziennik -->
+    <fragment android:id="@+id/diaryFragment"
+        android:name="com.fittrack.ui.diary.DiaryFragment"
+        android:label="@string/tab_diary">
+        <action android:id="@+id/main_to_food_photo"
+            app:destination="@id/foodPhotoFragment"/>
+    </fragment>
+
+    <!-- 2) Przepisy -->
+    <fragment android:id="@+id/recipesFragment"
+        android:name="com.fittrack.ui.recipes.RecipesFragment"
+        android:label="@string/tab_recipes">
+        <action android:id="@+id/main_to_recipe_detail"
+            app:destination="@id/recipeDetailFragment"/>
+    </fragment>
+
+    <!-- 3) Trening -->
+    <fragment android:id="@+id/workoutFragment"
+        android:name="com.fittrack.ui.workout.WorkoutFragment"
+        android:label="@string/tab_workout"/>
+
+    <!-- 4) Profil -->
+    <fragment android:id="@+id/profileFragment"
+        android:name="com.fittrack.ui.profile.ProfileFragment"
+        android:label="@string/tab_profile"/>
+
+    <!-- Wewnetrzne ekrany do nawigacji z zakladek -->
+    <fragment android:id="@+id/foodPhotoFragment"
+        android:name="com.fittrack.ui.diary.FoodPhotoFragment"
+        android:label="@string/food_photo_title"/>
+
+    <fragment android:id="@+id/recipeDetailFragment"
+        android:name="com.fittrack.ui.recipes.RecipeDetailFragment"
+        android:label="@string/recipe_detail_title">
+        <argument android:name="recipe"
+            app:argType="com.fittrack.data.model.RecipeResponse"/>
+    </fragment>
+</navigation>

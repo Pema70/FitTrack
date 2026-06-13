@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FitTrack</string>
+
+    <!-- Splash / Auth -->
+    <string name="login_title">Zaloguj się</string>
+    <string name="register_title">Załóż konto</string>
+    <string name="btn_login">Zaloguj</string>
+    <string name="btn_register">Zarejestruj</string>
+    <string name="no_account_register">Nie masz konta? Zarejestruj się</string>
+    <string name="hint_email">E-mail</string>
+    <string name="hint_password">Hasło</string>
+    <string name="hint_password_confirm">Powtórz hasło</string>
+    <string name="err_passwords_mismatch">Hasła nie są zgodne</string>
+
+    <!-- Bottom Nav -->
+    <string name="tab_diary">Dziennik</string>
+    <string name="tab_recipes">Przepisy</string>
+    <string name="tab_workout">Trening</string>
+    <string name="tab_profile">Profil</string>
+
+    <!-- Diary -->
+    <string name="diary_title">Dziennik dnia</string>
+    <string name="kcal_consumed_placeholder">Spożyte: 0 kcal</string>
+    <string name="kcal_remaining_placeholder">Pozostałe: 0 kcal</string>
+    <string name="add_entry">Dodaj wpis</string>
+
+    <!-- Dodaj zdjęciem -->
+    <string name="food_photo_title">Dodaj zdjęciem</string>
+    <string name="food_photo_hint">Zrób zdjęcie potrawy i dodaj wpis do dziennika.</string>
+    <string name="cd_food_photo">Zdjęcie potrawy</string>
+    <string name="btn_take_photo">Zrób zdjęcie</string>
+    <string name="hint_dish_name">Nazwa potrawy</string>
+    <string name="hint_quantity_g">Gramatura (g)</string>
+    <string name="hint_kcal_optional">Kalorie (opcjonalnie)</string>
+    <string name="label_meal_type">Posiłek</string>
+    <string name="meal_breakfast">Śniadanie</string>
+    <string name="meal_lunch">Obiad</string>
+    <string name="meal_dinner">Kolacja</string>
+    <string name="meal_snack">Przekąska</string>
+    <string name="btn_save_to_diary">Zapisz do dziennika</string>
+    <string name="btn_cancel">Anuluj</string>
+    <string name="err_dish_name_required">Podaj nazwę potrawy</string>
+    <string name="photo_cancelled">Anulowano zdjęcie</string>
+    <string name="entry_added">Wpis dodany</string>
+
+    <!-- Recipes -->
+    <string name="hint_search_recipes">Szukaj przepisów…</string>
+    <string name="recipe_detail_title">Szczegóły przepisu</string>
+    <string name="cd_recipe_image">Zdjęcie przepisu</string>
+
+    <!-- Workout -->
+    <string name="workout_title">Trening</string>
+    <string name="kcal_burned_placeholder">0 kcal spalone</string>
+    <string name="btn_add_workout">Dodaj trening</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profil i cele</string>
+    <string name="hint_name">Imię</string>
+    <string name="label_gender">Płeć</string>
+    <string name="gender_male">Mężczyzna</string>
+    <string name="gender_female">Kobieta</string>
+    <string name="hint_birth_date">Data urodzenia</string>
+    <string name="hint_weight">Waga (kg)</string>
+    <string name="hint_height">Wzrost (cm)</string>
+    <string name="label_activity">Poziom aktywności</string>
+    <string name="label_goal">Cel</string>
+    <string name="goal_lose">Schudnąć</string>
+    <string name="goal_maintain">Utrzymać wagę</string>
+    <string name="goal_gain">Przytyć</string>
+    <string name="btn_save">Zapisz</string>
+
+    <!-- Activity levels (Spinner) -->
+    <string-array name="activity_levels">
+        <item>Siedzący tryb życia</item>
+        <item>Niska aktywność</item>
+        <item>Umiarkowana aktywność</item>
+        <item>Wysoka aktywność</item>
+        <item>Bardzo wysoka aktywność</item>
+    </string-array>
+
+    <!-- Notifications -->
+    <string name="notif_channel_general">FitTrack — ogólne</string>
+</resources>

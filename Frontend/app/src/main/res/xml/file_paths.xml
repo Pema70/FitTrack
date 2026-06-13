@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Katalog wewn. w pamieci aplikacji na zdjecia potraw (cache + files) -->
+    <files-path name="food_photos" path="food_photos/"/>
+    <cache-path name="food_photos_cache" path="food_photos/"/>
+</paths>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+    <TextView android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rodzaj aktywnosci"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
+    <Spinner android:id="@+id/spinnerActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"/>
+    <TextView android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Czas trwania (minuty)"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
+    <EditText android:id="@+id/etDuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="np. 45"
+        android:layout_marginBottom="12dp"/>
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchManualKcal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Wlasna wartosc kcal (ze smartwatcha)"
+        android:layout_marginBottom="8dp"/>
+    <EditText android:id="@+id/etKcalManual"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="Spalone kcal"
+        android:visibility="gone"/>
+</LinearLayout>
