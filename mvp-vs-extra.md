@@ -1,6 +1,5 @@
-# MVP vs. Funkcje Dodatkowe
 
-## Zakres MVP (Minimum Viable Product)
+## Zakres MVP 
 
 Poniższe funkcje stanowią rdzeń aplikacji i są wymagane do pierwszego wydania.
 
@@ -41,16 +40,3 @@ Poniższe funkcje stanowią rdzeń aplikacji i są wymagane do pierwszego wydani
 
 ---
 
-## Funkcje Dodatkowe (poza MVP)
-
-Poniższe funkcje mogą zostać zrealizowane po dostarczeniu MVP, o ile pozwoli na to czas.
-
-| Funkcja                                          | Priorytet | Uwagi                                      |
-|--------------------------------------------------|-----------|--------------------------------------------|
-| Skanowanie kodów kreskowych produktów            | Wysoki    | Integracja z zewnętrzną bazą żywności      |
-| Integracja z Google Fit / Health Connect         | Średni    | Import treningów i kroków                  |
-| Wykresy postępów (waga, kalorie w czasie)        | Średni    | Widok statystyk tygodniowych/miesięcznych  |
-| Udostępnianie przepisów innym użytkownikom       | Niski     | Widoczność publiczna vs. prywatna          |
-| Tryb ciemny (Dark Mode)                          | Niski     | Systemowe ustawienie Android               |
-| Eksport danych do CSV/PDF                        | Niski     | Na żądanie użytkownika                     |
-| Widget na ekran główny (dzienne kcal)            | Niski     | AppWidget API                              |
