@@ -4,7 +4,7 @@ FitTrack is a comprehensive Android fitness app that helps you track your diet, 
 
 ## Calorie Counter
 
-Add meals to your daily diary and instantly see your calorie and macronutrient intake (protein, fat, carbohydrates). Edit portion sizes and calories recalculate automatically. Browse your meal history for previous days using the built-in calendar.
+Add meals to your daily diary and instantly see your calorie intake and remaining daily allowance on a clear progress bar. Edit portion sizes and calories recalculate automatically. Browse your meal history for previous days using the built-in calendar.
 
 ## Low-Calorie Recipes
 
@@ -16,10 +16,9 @@ Select an activity type (running, gym, cycling, and more), enter the duration, a
 
 ## Personalised Profile
 
-Enter your details (weight, height, age, gender, body goal) and FitTrack calculates your daily calorie target using the Mifflin–St Jeor formula (BMR/TDEE). Every weight update instantly refreshes your limits.
+Enter your details (weight, height, age, gender, body goal) and FitTrack calculates your daily calorie target using the Mifflin–St Jeor formula (BMR/TDEE). Every weight update instantly refreshes your daily limits.
 
 ## More Features
 - Food photo logging (Camera API)
-- Offline mode – the app works without an internet connection
 - Push notifications reminding you to stay hydrated
 - Secure account protected by JWT and BCrypt password hashing

@@ -4,7 +4,7 @@ FitTrack to kompleksowa aplikacja fitness na Androida, która pomaga Ci kontrolo
 
 ## Licznik kalorii
 
-Dodawaj posiłki do dziennika i natychmiast sprawdzaj, ile kalorii oraz makroskładników (białko, tłuszcze, węglowodany) dostarczyłeś w ciągu dnia. Edytuj gramaturę produktów, a kalkulacje zaktualizują się automatycznie. Przeglądaj historię posiłków z poprzednich dni za pomocą wbudowanego kalendarza.
+Dodawaj posiłki do dziennika i natychmiast sprawdzaj na czytelnym wskaźniku, ile kalorii dostarczyłeś w ciągu dnia, a ile pozostało do osiągnięcia celu. Edytuj gramaturę produktów, a kalkulacje zaktualizują się automatycznie. Przeglądaj historię posiłków z poprzednich dni za pomocą wbudowanego kalendarza.
 
 ## Przepisy niskokaloryczne
 
@@ -16,10 +16,9 @@ Wybierz rodzaj aktywności (bieganie, siłownia, jazda rowerem i wiele innych), 
 
 ## Spersonalizowany profil
 
-Podaj swoje dane (waga, wzrost, wiek, płeć, cel sylwetkowy), a FitTrack wyliczy Twoje dzienne zapotrzebowanie kaloryczne na podstawie wzoru Mifflina–St Jeora (BMR/TDEE). Każda zmiana wagi natychmiast aktualizuje Twoje limity.
+Podaj swoje dane (waga, wzrost, wiek, płeć, cel sylwetkowy), a FitTrack wyliczy Twoje dzienne zapotrzebowanie kaloryczne na podstawie wzoru Mifflina–St Jeora (BMR/TDEE). Każda zmiana wagi natychmiast aktualizuje Twoje limity na ekranie głównym.
 
 ## Inne funkcje
 - Dokumentowanie posiłków zdjęciem (Camera API)
-- Tryb offline – aplikacja działa nawet bez internetu
 - Powiadomienia push przypominające o nawodnieniu
 - Bezpieczne konto chronione tokenem JWT i szyfrowaniem BCrypt

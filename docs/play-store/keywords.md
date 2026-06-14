@@ -1,7 +1,7 @@
 # Słowa kluczowe / Keywords
 
 ## PL
-kalorie, licznik kalorii, dieta, makroskładniki, przepisy, niskokaloryczne, trening, fitness, BMI, BMR, TDEE, dziennik posiłków, aktywność fizyczna, zdrowe odżywianie, odchudzanie, siłownia, bieganie, nawodnienie
+kalorie, licznik kalorii, dieta, zdjęcia posiłków, przepisy, bmr, tdee, dziennik posiłków, trening, aktywność fizyczna, odchudzanie, siłownia, bieganie, nawodnienie, przypomnienia
 
 ## EN
-calories, calorie counter, diet, macros, recipes, low calorie, workout, fitness, BMI, BMR, TDEE, food diary, physical activity, healthy eating, weight loss, gym, running, hydration
+calories, calorie counter, diet, food tracking, recipes, bmr, tdee, food diary, workout, physical activity, weight loss, gym, running, hydration, reminders

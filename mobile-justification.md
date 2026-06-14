@@ -15,10 +15,6 @@ Implementacja: `FoodPhotoFragment` + `ActivityResultContracts.TakePicture()`.
 
 Urządzenie mobilne towarzyszy użytkownikowi przez cały dzień. Powiadomienia push z przypomnieniami o nawodnieniu (NotificationScheduler, ReminderWorker) są możliwe wyłącznie na platformie mobilnej – nawet gdy aplikacja działa w tle.
 
-## Tryb offline-first (Room / SQLite)
-
-Na siłowni w podziemiu, w górach, w metrze – aplikacja musi działać bez internetu. Room (SQLite) przechowuje dane lokalnie, a NetworkCapabilities automatycznie przełącza źródło danych.
-
 ## Podsumowanie
 
 | Potrzeba użytkownika            | Funkcja mobilna                         |
@@ -26,4 +22,3 @@ Na siłowni w podziemiu, w górach, w metrze – aplikacja musi działać bez in
 | Szybkie logowanie posiłku       | Zawsze dostępna aplikacja natywna       |
 | Dokumentowanie zdjęciem         | Camera API                              |
 | Przypomnienia w tle             | WorkManager / Notifications             |
-| Praca bez internetu             | Room offline-first                      |
