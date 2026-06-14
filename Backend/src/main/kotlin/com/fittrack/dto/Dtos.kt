@@ -160,3 +160,13 @@ data class WorkoutResponse(
     val distanceKm: BigDecimal?,
     val notes: String?
 )
+// =================== PRODUCTS ===================
+
+data class ProductSearchResponse(
+    val id: Long,
+    val name: String,
+    val kcalPer100g: Double,
+    val proteinPer100g: Double,
+    val fatPer100g: Double,
+    val carbsPer100g: Double
+)

@@ -30,7 +30,7 @@ class SecurityConfig(private val jwtFilter: JwtAuthFilter) {
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf { it.disable() }
-            .cors { } // korzysta z bean'a CorsFilter
+            .cors { }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
@@ -39,7 +39,8 @@ class SecurityConfig(private val jwtFilter: JwtAuthFilter) {
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
-                        "/api/recipes"          // publiczne wyszukiwanie przepisów (GET)
+                        "/api/recipes",
+                        "/api/products/**"
                     ).permitAll()
                     .anyRequest().authenticated()
             }

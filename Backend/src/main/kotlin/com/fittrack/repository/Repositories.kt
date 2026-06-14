@@ -20,7 +20,9 @@ interface UserProfileRepository : JpaRepository<UserProfile, Long> {
 }
 
 @Repository
-interface FoodProductRepository : JpaRepository<FoodProduct, Long>
+interface FoodProductRepository : JpaRepository<FoodProduct, Long> {
+    fun findByNameContainingIgnoreCase(name: String): List<FoodProduct>
+}
 
 @Repository
 interface DiaryEntryRepository : JpaRepository<DiaryEntry, Long> {
