@@ -1,36 +1,81 @@
-# API Overview
+# API Overview — FitTrack Backend
 
-Backend FitTrack udostępnia REST API zbudowane w Spring Boot 3.3.2 (Kotlin 1.9).  
-Dokumentacja interaktywna dostępna jest pod adresem `/swagger-ui.html` (OpenAPI 3, springdoc-openapi 2.6).
+Wersja API: v1 (Spring Boot 3.3.2)
+Base URL (lokalnie): [http://10.0.2.2:8080](http://10.0.2.2:8080) (Android Emulator) | http://localhost:8080
+Dokumentacja interaktywna: GET /swagger-ui.html (OpenAPI 3)
 
-## Baza URL
+## Autentykacja
 
-| Środowisko    | URL                        |
-|---------------|----------------------------|
-| Development   | `http://localhost:8080`    |
-| Production    | TBD                        |
+API używa JWT Bearer Token.
+Authorization: Bearer <JWT>
 
-## Autoryzacja
+access_token — wydawany po pomyślnym logowaniu (podpis HS256)
+Czas życia tokenu oraz logika odświeżania są obsługiwane w AuthService.
+Odświeżanie: POST /api/auth/refresh
 
-Wszystkie chronione endpointy wymagają nagłówka: Authorization: Bearer <JWT>
+## Endpointy
 
+### Auth — /api/auth
 
-Token JWT (podpis HS256) jest wydawany po pomyślnym logowaniu przez `POST /api/auth/login`.  
-Czas życia tokenu oraz logika odświeżania są obsługiwane w `AuthService`.
+| Metoda | Ścieżka                 | Auth | Opis                                                        |
+|--------|-------------------------|------|-------------------------------------------------------------|
+| POST   | `/api/auth/register`    | —    | Rejestracja nowego użytkownika                              |
+| POST   | `/api/auth/login`       | —    | Logowanie → zwraca token JWT                                |
+| POST   | `/api/auth/refresh`     | JWT  | Odświeżenie tokenu dostępu                                  |
+| PATCH  | `/api/auth/password`    | JWT  | Zmiana hasła (wymaga podania starego hasła)                 |
 
-## Główne grupy endpointów
+### Profile — /api/profile
 
-| Prefix           | Opis                                      |
-|------------------|-------------------------------------------|
-| `/api/auth`      | Rejestracja, logowanie, odświeżanie tokenu |
-| `/api/profile`   | Pobieranie i edycja profilu użytkownika   |
-| `/api/diary`     | CRUD wpisów posiłków i treningów          |
-| `/api/recipes`   | Przeglądanie, dodawanie i edycja przepisów |
+| Metoda | Ścieżka                 | Auth | Opis                                                                   |
+|--------|-------------------------|------|------------------------------------------------------------------------|
+| GET    | `/api/profile`          | JWT  | Pobranie profilu obecnie zalogowanego użytkownika                      |
+| PUT    | `/api/profile`          | JWT  | Aktualizacja profilu wraz z automatycznym przeliczeniem dziennego celu |
 
-## Obsługa błędów
+### Dziennik posiłków — /api/diary
 
-Wszystkie błędy zwracane są w ujednoliconym formacie przez `GlobalExceptionHandler.kt`:
+| Metoda | Ścieżka                 | Auth | Opis                                                                |
+|--------|-------------------------|------|---------------------------------------------------------------------|
+| GET    | `/api/diary`            | JWT  | Pobranie wpisów posiłków na dany dzień                              |
+| POST   | `/api/diary`            | JWT  | Dodanie nowego wpisu do dziennika                                   |
+| PATCH  | `/api/diary/{id}`       | JWT  | Edycja ilości gramów wpisu (automatycznie przelicza kalorie)        |
+| DELETE | `/api/diary/{id}`       | JWT  | Usunięcie wpisu posiłku                                             |
+| GET    | `/api/diary/summary`    | JWT  | Pobranie dziennego podsumowania spożytych kalorii i makroskładników |
 
+### Przepisy — /api/recipes
+
+| Metoda | Ścieżka                          | Auth | Opis                                                                      |
+|--------|----------------------------------|------|---------------------------------------------------------------------------|
+| GET    | `/api/recipes`                   | JWT  | Wyszukiwanie publicznych przepisów                                        |
+| GET    | `/api/recipes/mine`              | JWT  | Pobranie własnych przepisów (tylko zdefiniowanych przez autora zapytania) |
+| GET    | `/api/recipes/favorites`         | JWT  | Pobranie ulubionych przepisów użytkownika                                 |
+| POST   | `/api/recipes/{id}/favorite`     | JWT  | Dodanie przepisu o danym ID do ulubionych                                 |
+| DELETE | `/api/recipes/{id}/favorite`     | JWT  | Usunięcie przepisu o danym ID z ulubionych                                |
+| POST   | `/api/recipes`                   | JWT  | Dodanie (stworzenie) całkowicie nowego przepisu                           |
+| PUT    | `/api/recipes/{id}`              | JWT  | Edycja przepisu (operacja dozwolona tylko dla jego autora)                |
+| DELETE | `/api/recipes/{id}`              | JWT  | Usunięcie przepisu (operacja dozwolona tylko dla jego autora)             |
+
+### Treningi — /api/workouts
+
+| Metoda | Ścieżka                 | Auth | Opis                                                                     |
+|--------|-------------------------|------|--------------------------------------------------------------------------|
+| GET    | `/api/workouts`         | JWT  | Pobranie historii treningów na dany dzień (po dacie)                     |
+| POST   | `/api/workouts`         | JWT  | Dodanie nowego treningu                                                  |
+| PUT    | `/api/workouts/{id}`    | JWT  | Edycja istniejącego wpisu treningowego                                   |
+| DELETE | `/api/workouts/{id}`    | JWT  | Usunięcie istniejącego wpisu treningowego                                |
+
+## Kody błędów
+
+Wszystkie błędy zwracane są w ujednoliconym formacie JSON obsługiwanym przez GlobalExceptionHandler.kt.
+
+| Kod | Opis                                                                    |
+|-----|-------------------------------------------------------------------------|
+| 400 | Bad Request – Błędne dane wejściowe (np. błędy walidacji)               |
+| 401 | Unauthorized – Brak lub nieważny token JWT                              |
+| 403 | Forbidden – Brak uprawnień (np. edycja cudzego przepisu)                |
+| 404 | Not Found – Zasób nie istnieje (np. przepis o podanym ID)               |
+| 500 | Internal Server Error – Wewnętrzny błąd serwera                         |
+
+Przykład odpowiedzi z błędem:
 ```json
 {
   "timestamp": "2025-06-01T12:00:00Z",
@@ -38,4 +83,3 @@ Wszystkie błędy zwracane są w ujednoliconym formacie przez `GlobalExceptionHa
   "error": "Bad Request",
   "message": "Pole email jest wymagane"
 }
-```

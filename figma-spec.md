@@ -1,7 +1,5 @@
 # Figma Spec – FitTrack
 
-> Plik roboczy Figma: *[link do uzupełnienia przez zespół]*
-
 ## Ekrany aplikacji
 
 ### 1. Ekran logowania / rejestracji
@@ -9,29 +7,28 @@
 - Przełącznik widoczności hasła
 - Komunikaty błędów z API wyświetlane inline
 
-### 2. Ekran główny (Dashboard)
-- Kołowy wskaźnik postępu kalorii (Progress Bar)
-- Podsumowanie makroskładników: Białko / Tłuszcze / Węglowodany
-- Szybki dostęp do dodania posiłku lub treningu
+### 2. Dziennik posiłków (Ekran główny)
+- Karta podsumowująca na górze ekranu:
+  - Zapełniający się poziomy pasek postępu kalorii (Progress Bar)
+  - Licznik spożytych oraz pozostałych kalorii
+  - Nawigacja datą: kalendarz / strzałki „poprzedni/następny dzień"
+- Lista wpisów posiłków dla wybranego dnia
+- Edycja wpisu (gramów) po kliknięciu → automatyczne przeliczenie kcal
+- Pływający przycisk (FAB) do szybkiego dodawania nowego posiłku / zdjęcia
 
-### 3. Dziennik posiłków
-- Lista wpisów dla wybranego dnia
-- Nawigacja datą: kalendarz + strzałki „wczoraj/jutro"
-- Edycja gramów → automatyczne przeliczenie kcal
-
-### 4. Przepisy
+### 3. Przepisy
 - Pole wyszukiwania tekstowego + filtry
 - Lista wyników przepisów
 - Zakładka „Moje przepisy" i „Ulubione"
 - Formularz dodawania przepisu (nazwa, składniki z gramaturą, opis krok po kroku, kcal, URL zdjęcia)
 
-### 5. Trening
+### 4. Trening
 - Panel wyboru aktywności (bieganie, siłownia, rower, inne)
 - Pole czasu trwania → automatyczne kcal
 - Przełącznik „Własna wartość kcal" (np. ze smartwatcha)
 - Lista treningów z opcją edycji / usunięcia
 
-### 6. Profil
+### 5. Profil
 - Pola: imię, nazwisko, data urodzenia, waga, wzrost, płeć, cel wagowy
 - Wyświetlanie wyliczonego BMR i TDEE
 - Przycisk „Wyloguj" (usuwa token JWT, przekierowanie na login)
@@ -41,4 +38,3 @@ Dolny pasek nawigacji (Bottom Navigation) z czterema zakładkami:
 `Dziennik` | `Przepisy` | `Trening` | `Profil`
 
 Graf nawigacji: `main_nav_graph.xml` (Jetpack Navigation Component)
-
