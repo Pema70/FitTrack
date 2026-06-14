@@ -1,15 +1,15 @@
 server:
-  port: 8080
+  port: ${PORT:8080}   
 
 spring:
   application:
     name: fittrack-backend
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/fittrack
+    url: ${SPRING_DATASOURCE_URL}
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: DryDurags24
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -31,9 +31,9 @@ spring:
 
 fittrack:
   jwt:
-    secret: "ZmlsdHJhY2tfc2VjcmV0X2tleV9kbHpfZ2VuZXJhdGVfcG9wcm93bmllX2tsdWN6X3NlY3JldGFybnlfMjU2X2JpdF9zZWNyZXQ="
-    access-token-expiration-ms: 3600000
-    refresh-token-expiration-ms: 2592000000
+    secret: ${FITTRACK_JWT_SECRET}  #1DuCjRHKn0LGMMGH3Qk2ow==
+    access-token-expiration-ms: ${JWT_ACCESS_EXP_MS:3600000}
+    refresh-token-expiration-ms: ${JWT_REFRESH_EXP_MS:2592000000}
 
 springdoc:
   swagger-ui:
