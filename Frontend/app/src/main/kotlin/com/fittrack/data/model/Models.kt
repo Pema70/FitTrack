@@ -3,13 +3,13 @@ package com.fittrack.data.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-// ─── Auth ─────────────────────────────────────────────────────
+// --- Auth ---
 data class LoginRequest(val email: String, val password: String)
 data class RegisterRequest(val email: String, val password: String)
 data class AuthResponse(val accessToken: String?, val userId: Long?, val email: String?)
 data class ChangePasswordRequest(val oldPassword: String, val newPassword: String)
 
-// ─── Profile ──────────────────────────────────────────────────
+// --- Profile ---
 data class ProfileResponse(
     val userId: Long?,
     val displayName: String?,
@@ -33,19 +33,20 @@ data class ProfileUpdateRequest(
     val goal: String?
 )
 
-// ─── Diary ────────────────────────────────────────────────────
+// --- Diary ---
 @Parcelize
 data class DiaryEntryResponse(
     val id: Long,
-    val productId: Long,
-    val productName: String,
+    val entryDate: String,
+    val mealType: String,
+    val productName: String?,
     val quantityG: Double,
     val kcal: Double,
     val proteinG: Double,
     val fatG: Double,
     val carbsG: Double,
-    val mealType: String,
-    val date: String
+    val photoPath: String?,
+    val note: String?
 ) : Parcelable
 
 data class DailySummaryResponse(
@@ -59,9 +60,16 @@ data class DailySummaryResponse(
     val carbsG: Double
 )
 
+data class DiaryEntryRequest(
+    val productId: Long,
+    val quantityG: Double,
+    val mealType: String,
+    val entryDate: String
+)
+
 data class DiaryUpdateRequest(val quantityG: Double)
 
-// ─── Recipes ──────────────────────────────────────────────────
+// --- Recipes ---
 @Parcelize
 data class RecipeResponse(
     val id: Long,
@@ -76,7 +84,7 @@ data class RecipeResponse(
     val imageUrl: String?,
     val tags: List<String>,
     val isFavorite: Boolean,
-    val isOwner: Boolean
+    val isOwner: Boolean = false
 ) : Parcelable
 
 data class RecipeRequest(
@@ -92,7 +100,7 @@ data class RecipeRequest(
     val tags: List<String>
 )
 
-// ─── Workouts ─────────────────────────────────────────────────
+// --- Workouts ---
 data class WorkoutResponse(
     val id: Long,
     val activityDate: String,
@@ -106,24 +114,16 @@ data class WorkoutRequest(
     val activityDate: String,
     val activityType: String,
     val durationMin: Int,
-    val kcalBurned: Int?,   // null = oblicz automatycznie
+    val kcalBurned: Int?,
     val notes: String?
 )
-// --- Food / Diary entry ---
-data class DiaryEntryRequest(
-    val productId: Long,
-    val quantityG: Double,
-    val mealType: String,
-    val entryDate: String
-)
 
-// --- Products (wyszukiwarka) ---
+// --- Products ---
 data class ProductResponse(
     val id: Long,
     val name: String,
     val kcalPer100g: Double,
     val proteinPer100g: Double,
     val fatPer100g: Double,
-    val carbsPer100g: Double,
-    val barcode: String?
+    val carbsPer100g: Double
 )

@@ -75,4 +75,7 @@ interface FitTrackApi {
 
     @DELETE("workouts/{id}")
     suspend fun deleteWorkout(@Path("id") id: Long)
+    // Products
+    @GET("products")
+    suspend fun searchProducts(@Query("q") query: String): List<ProductResponse>
 }
