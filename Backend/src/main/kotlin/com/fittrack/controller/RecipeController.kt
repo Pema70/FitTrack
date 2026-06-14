@@ -6,22 +6,30 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import jakarta.validation.constraints.Size
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Recipes", description = "Przepisy kulinarne")
 @SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/recipes")
+@Validated  // ← wymagane do walidacji @RequestParam
 class RecipeController(private val recipeService: RecipeService) {
 
     @Operation(summary = "Wyszukaj publiczne przepisy")
     @GetMapping
     fun search(
-        @RequestParam(defaultValue = "") q: String,
-        @RequestParam(required = false) tag: String?
+        @RequestParam(defaultValue = "")
+        @Size(max = 100, message = "Fraza wyszukiwania może mieć max 100 znaków")
+        q: String,
+
+        @RequestParam(required = false)
+        @Size(max = 30, message = "Tag może mieć max 30 znaków")
+        tag: String?
     ) = recipeService.search(q, tag)
 
     @Operation(summary = "Moje przepisy (tylko autora)")

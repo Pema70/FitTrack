@@ -1,6 +1,7 @@
 package com.fittrack.config
 
 import com.fittrack.security.JwtAuthFilter
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -32,6 +33,11 @@ class SecurityConfig(private val jwtFilter: JwtAuthFilter) {
             .csrf { it.disable() }
             .cors { }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            .exceptionHandling { ex ->
+                ex.authenticationEntryPoint { _, response, _ ->
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
+                }
+            }
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers(
