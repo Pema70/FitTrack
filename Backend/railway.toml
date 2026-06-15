@@ -5,4 +5,3 @@ buildCommand = "./gradlew bootJar -x test"
 [deploy]
 startCommand = "java -jar build/libs/fittrack-1.0.0.jar"
 healthcheckPath = "/swagger-ui.html"
-restartPolicyType = "on-failure"
