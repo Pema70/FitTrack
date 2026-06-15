@@ -32,6 +32,12 @@ class AddRecipeFragment : Fragment(R.layout.fragment_add_recipe) {
     private var photoFile: File? = null
     private var photoUri: Uri? = null
 
+    private val requestPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) openCamera()
+            else Snackbar.make(b.root, "Brak uprawnień do aparatu", Snackbar.LENGTH_LONG).show()
+        }
+
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { ok ->
             if (ok && photoFile != null) {
@@ -76,6 +82,16 @@ class AddRecipeFragment : Fragment(R.layout.fragment_add_recipe) {
     }
 
     private fun launchCamera() {
+        if (requireContext().checkSelfPermission(android.Manifest.permission.CAMERA)
+            == android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            openCamera()
+        } else {
+            requestPermission.launch(android.Manifest.permission.CAMERA)
+        }
+    }
+
+    private fun openCamera() {
         val dir = File(requireContext().filesDir, "recipe_photos").apply { mkdirs() }
         val stamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val file = File(dir, "recipe_$stamp.jpg")
@@ -105,7 +121,6 @@ class AddRecipeFragment : Fragment(R.layout.fragment_add_recipe) {
             return
         }
 
-        // Czas przygotowania musi być >= 1
         val validatedTime = if (time < 1) 1 else time
 
         val request = RecipeRequest(
