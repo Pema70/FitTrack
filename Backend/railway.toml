@@ -1,6 +1,6 @@
 [build]
 builder = "nixpacks"
-buildCommand = "./gradlew bootJar -x test"
+buildCommand = "chmod +x gradlew && ./gradlew bootJar -x test"
 
 [deploy]
 startCommand = "java -jar build/libs/fittrack-1.0.0.jar"
