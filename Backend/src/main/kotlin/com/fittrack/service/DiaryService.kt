@@ -65,6 +65,7 @@ class DiaryService(
         return entry.toResponse()
     }
 
+    @Transactional(readOnly = true)  // ← DODANE
     fun getEntriesForDate(email: String, date: LocalDate): List<DiaryEntryResponse> {
         val user = userRepo.findByEmail(email).orElseThrow()
         return diaryRepo.findAllByUserIdAndEntryDate(user.id, date).map { it.toResponse() }
@@ -111,6 +112,7 @@ class DiaryService(
         diaryRepo.delete(entry)
     }
 
+    @Transactional(readOnly = true)  // ← DODANE
     fun getDailySummary(email: String, date: LocalDate): DailySummaryResponse {
         val user     = userRepo.findByEmail(email).orElseThrow()
         val profile  = profileRepo.findByUserId(user.id).orElseThrow()
