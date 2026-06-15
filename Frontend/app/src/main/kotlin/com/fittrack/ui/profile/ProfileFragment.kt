@@ -1,8 +1,14 @@
 package com.fittrack.ui.profile
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
@@ -13,7 +19,9 @@ import androidx.navigation.fragment.findNavController
 import com.fittrack.R
 import com.fittrack.data.model.ProfileUpdateRequest
 import com.fittrack.databinding.FragmentProfileBinding
+import com.fittrack.notification.CustomNotificationReceiver
 import com.fittrack.util.Resource
+import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -97,6 +105,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         b.btnChangePassword.setOnClickListener { showChangePasswordDialog() }
 
+        b.btnNotificationSettings.setOnClickListener { showNotificationSettingsDialog() }
+
         b.btnLogout.setOnClickListener {
             vm.logout()
             findNavController().navigate(R.id.profile_to_login)
@@ -148,6 +158,75 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 }
             }
         }
+    }
+
+    private fun showNotificationSettingsDialog() {
+        val view = layoutInflater.inflate(R.layout.dialog_notification_settings, null)
+        val btnTime = view.findViewById<Button>(R.id.btnPickTime)
+        val etContent = view.findViewById<EditText>(R.id.etNotificationContent)
+        val chipWorkout = view.findViewById<Chip>(R.id.chipWorkout)
+        val chipWater = view.findViewById<Chip>(R.id.chipWater)
+
+        var selectedHour = 8
+        var selectedMinute = 0
+
+        btnTime.setOnClickListener {
+            TimePickerDialog(requireContext(), { _, h, m ->
+                selectedHour = h
+                selectedMinute = m
+                btnTime.text = String.format("Godzina: %02d:%02d", h, m)
+            }, selectedHour, selectedMinute, true).show()
+        }
+
+        chipWorkout.setOnClickListener { etContent.setText("Czas na trening! Ruszaj się!") }
+        chipWater.setOnClickListener { etContent.setText("Pamiętaj o nawodnieniu! Pij wodę.") }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Ustawienia powiadomień")
+            .setView(view)
+            .setPositiveButton("Zapisz") { _, _ ->
+                val content = etContent.text.toString()
+                if (content.isNotBlank()) {
+                    scheduleNotification(selectedHour, selectedMinute, content)
+                    Snackbar.make(b.root, "Powiadomienie zaplanowane na $selectedHour:$selectedMinute", Snackbar.LENGTH_SHORT).show()
+                } else {
+                    Snackbar.make(b.root, "Wpisz treść powiadomienia", Snackbar.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Anuluj", null)
+            .show()
+    }
+
+    private fun scheduleNotification(hour: Int, minute: Int, message: String) {
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(requireContext(), CustomNotificationReceiver::class.java).apply {
+            putExtra("title", "FitTrack")
+            putExtra("message", message)
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(),
+            200,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
+            if (timeInMillis <= System.currentTimeMillis()) {
+                add(Calendar.DAY_OF_MONTH, 1)
+            }
+        }
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
     }
 
     override fun onDestroyView() { super.onDestroyView(); _b = null }

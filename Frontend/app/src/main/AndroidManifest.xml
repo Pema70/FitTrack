@@ -46,5 +46,9 @@
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
+
+        <receiver
+            android:name=".notification.CustomNotificationReceiver"
+            android:exported="false" />
     </application>
 </manifest>
