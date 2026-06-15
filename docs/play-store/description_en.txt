@@ -18,16 +18,16 @@ KEY FEATURES:
 🍽️ LOW-CALORIE RECIPES
 • Browse a curated recipe database
 • Filter by calories and ingredients
-• Add, edit and delete your own recipes
+• Add and delete your own recipes
 • Save favourites for quick access
 
 👤 PERSONALIZED PROFILE
 • Enter your age, gender, weight and height
 • Automatic daily calorie goal calculation (BMR/TDEE via Mifflin–St Jeor)
 
-🔔 NOTIFICATIONS & OFFLINE MODE
+🔔 NOTIFICATIONS 
 • Hydration reminders throughout the day
-• Full functionality even without internet connection
+
 
 PRIVACY & SECURITY
 Passwords are stored using BCrypt hashing. All data is transmitted over HTTPS. Your data belongs to you.

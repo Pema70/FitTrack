@@ -19,14 +19,14 @@ Poniższe funkcje stanowią rdzeń aplikacji i są wymagane do pierwszego wydani
 - [x] Edycja gramów → automatyczne przeliczenie kcal
 - [x] Usuwanie wpisu
 - [x] Historia posiłków (nawigacja po datach: kalendarz, strzałki)
-- [x] Ekran główny z kołowym wskaźnikiem kcal i makro
+- [x] Ekran główny z paskiem postępu kcal i makro
 
 ### Przepisy
 - [x] Przeglądanie i wyszukiwanie przepisów
 - [x] Filtrowanie przepisów
 - [x] Dodawanie własnego przepisu
-- [x] Edycja i usuwanie własnych przepisów
-- [x] Zakładka „Ulubione" i „Moje przepisy"
+- [x] Usuwanie własnych przepisów
+- [x] Zakładka „Wszystkie przepisy", „Ulubione" i „Moje przepisy"
 
 ### Trening
 - [x] Dodawanie treningu (typ aktywności + czas → automatyczne kcal)
@@ -35,8 +35,8 @@ Poniższe funkcje stanowią rdzeń aplikacji i są wymagane do pierwszego wydani
 
 ### Funkcje natywne
 - [x] Camera API – dokumentowanie posiłków zdjęciem
-- [x] WorkManager – powiadomienia push o nawodnieniu
-- [x] Tryb offline-first (Room/SQLite + NetworkCapabilities)
+- [x] WorkManager – powiadomienia push o nawodnieniu/treningu z wlasną treścią
+ 
 
 ---
 

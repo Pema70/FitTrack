@@ -8,7 +8,7 @@ Add meals to your daily diary and instantly see your calorie intake and remainin
 
 ## Low-Calorie Recipes
 
-Browse a recipe library, filter results, and save your favourites to the "Favourites" tab. Have a recipe of your own? Add it to the app – complete with ingredients, step-by-step instructions, and estimated calories. You can edit or delete your recipes at any time.
+Browse a recipe library, filter results, and save your favourites to the "Favourites" tab. Have a recipe of your own? Add it to the app – complete with ingredients, step-by-step instructions, and estimated calories. You can edit  your recipes at any time.
 
 ## Workout Journal
 

@@ -35,7 +35,7 @@ Masz pełne prawo do:
 * Żądania całkowitego usunięcia Twojego konta wraz ze wszystkimi powiązanymi danymi z naszych serwerów.
 
 ### 6. Kontakt
-Jeśli masz jakiekolwiek pytania dotyczące tej Polityki Prywatności lub swoich danych, skontaktuj się z nami pod adresem: **[Twój e-mail]**
+Jeśli masz jakiekolwiek pytania dotyczące tej Polityki Prywatności lub swoich danych, skontaktuj się z nami pod adresem: fittrack@gmail.com
 
 ---
 
@@ -70,4 +70,4 @@ You have the right to:
 * Request the complete deletion of your account and all associated data from our servers.
 
 ### 6. Contact Us
-If you have any questions regarding this Privacy Policy or your data, please contact us at: **[Your Email]**
+If you have any questions regarding this Privacy Policy or your data, please contact us at: fittrack@gmail.com

@@ -1,81 +1,224 @@
-# API Overview — FitTrack Backend
 
-Wersja API: v1 (Spring Boot 3.3.2)
-Base URL (lokalnie): [http://10.0.2.2:8080](http://10.0.2.2:8080) (Android Emulator) | http://localhost:8080
-Dokumentacja interaktywna: GET /swagger-ui.html (OpenAPI 3)
+- `access_token` — wydawany po pomyślnym logowaniu, czas życia konfigurowany w `AuthService`
+- `refresh_token` — przekazywany w body żądania `POST /api/auth/refresh`, służy do uzyskania nowego `access_token` bez ponownego logowania
+- Endpointy nieoznaczone jako `JWT` są publiczne (nie wymagają nagłówka `Authorization`)
 
-## Autentykacja
-
-API używa JWT Bearer Token.
-Authorization: Bearer <JWT>
-
-access_token — wydawany po pomyślnym logowaniu (podpis HS256)
-Czas życia tokenu oraz logika odświeżania są obsługiwane w AuthService.
-Odświeżanie: POST /api/auth/refresh
+---
 
 ## Endpointy
 
-### Auth — /api/auth
+### Auth — `/api/auth`
 
-| Metoda | Ścieżka                 | Auth | Opis                                                        |
-|--------|-------------------------|------|-------------------------------------------------------------|
-| POST   | `/api/auth/register`    | —    | Rejestracja nowego użytkownika                              |
-| POST   | `/api/auth/login`       | —    | Logowanie → zwraca token JWT                                |
-| POST   | `/api/auth/refresh`     | JWT  | Odświeżenie tokenu dostępu                                  |
-| PATCH  | `/api/auth/password`    | JWT  | Zmiana hasła (wymaga podania starego hasła)                 |
+| Metoda | Ścieżka              | Auth | Opis                                                    |
+|--------|----------------------|------|---------------------------------------------------------|
+| POST   | `/api/auth/register` | —    | Rejestracja nowego użytkownika                          |
+| POST   | `/api/auth/login`    | —    | Logowanie → zwraca `access_token` i `refresh_token`     |
+| POST   | `/api/auth/refresh`  | —    | Odświeżenie tokenu dostępu na podstawie `refresh_token` |
+| PATCH  | `/api/auth/password` | JWT  | Zmiana hasła (wymaga podania aktualnego hasła)          |
 
-### Profile — /api/profile
+**Przykład — rejestracja:**
+```http
+POST /api/auth/register
+Content-Type: application/json
 
-| Metoda | Ścieżka                 | Auth | Opis                                                                   |
-|--------|-------------------------|------|------------------------------------------------------------------------|
-| GET    | `/api/profile`          | JWT  | Pobranie profilu obecnie zalogowanego użytkownika                      |
-| PUT    | `/api/profile`          | JWT  | Aktualizacja profilu wraz z automatycznym przeliczeniem dziennego celu |
+{
+  "email": "user@example.com",
+  "password": "Secret123!",
+  "name": "Jan Kowalski"
+}
+```
 
-### Dziennik posiłków — /api/diary
+**Odpowiedź (200 OK):**
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
+  "refreshToken": "dGhpcyBpcyBhIHJlZnJlc2g..."
+}
+```
 
-| Metoda | Ścieżka                 | Auth | Opis                                                                |
-|--------|-------------------------|------|---------------------------------------------------------------------|
-| GET    | `/api/diary`            | JWT  | Pobranie wpisów posiłków na dany dzień                              |
-| POST   | `/api/diary`            | JWT  | Dodanie nowego wpisu do dziennika                                   |
-| PATCH  | `/api/diary/{id}`       | JWT  | Edycja ilości gramów wpisu (automatycznie przelicza kalorie)        |
-| DELETE | `/api/diary/{id}`       | JWT  | Usunięcie wpisu posiłku                                             |
-| GET    | `/api/diary/summary`    | JWT  | Pobranie dziennego podsumowania spożytych kalorii i makroskładników |
+**Przykład — odświeżenie tokenu:**
+```http
+POST /api/auth/refresh
+Content-Type: application/json
 
-### Przepisy — /api/recipes
+{
+  "refreshToken": "dGhpcyBpcyBhIHJlZnJlc2g..."
+}
+```
 
-| Metoda | Ścieżka                          | Auth | Opis                                                                      |
-|--------|----------------------------------|------|---------------------------------------------------------------------------|
-| GET    | `/api/recipes`                   | JWT  | Wyszukiwanie publicznych przepisów                                        |
-| GET    | `/api/recipes/mine`              | JWT  | Pobranie własnych przepisów (tylko zdefiniowanych przez autora zapytania) |
-| GET    | `/api/recipes/favorites`         | JWT  | Pobranie ulubionych przepisów użytkownika                                 |
-| POST   | `/api/recipes/{id}/favorite`     | JWT  | Dodanie przepisu o danym ID do ulubionych                                 |
-| DELETE | `/api/recipes/{id}/favorite`     | JWT  | Usunięcie przepisu o danym ID z ulubionych                                |
-| POST   | `/api/recipes`                   | JWT  | Dodanie (stworzenie) całkowicie nowego przepisu                           |
-| PUT    | `/api/recipes/{id}`              | JWT  | Edycja przepisu (operacja dozwolona tylko dla jego autora)                |
-| DELETE | `/api/recipes/{id}`              | JWT  | Usunięcie przepisu (operacja dozwolona tylko dla jego autora)             |
+---
 
-### Treningi — /api/workouts
+### Profile — `/api/profile`
 
-| Metoda | Ścieżka                 | Auth | Opis                                                                     |
-|--------|-------------------------|------|--------------------------------------------------------------------------|
-| GET    | `/api/workouts`         | JWT  | Pobranie historii treningów na dany dzień (po dacie)                     |
-| POST   | `/api/workouts`         | JWT  | Dodanie nowego treningu                                                  |
-| PUT    | `/api/workouts/{id}`    | JWT  | Edycja istniejącego wpisu treningowego                                   |
-| DELETE | `/api/workouts/{id}`    | JWT  | Usunięcie istniejącego wpisu treningowego                                |
+| Metoda | Ścieżka        | Auth | Opis                                                                        |
+|--------|----------------|------|-----------------------------------------------------------------------------|
+| GET    | `/api/profile` | JWT  | Pobranie profilu aktualnie zalogowanego użytkownika                         |
+| PUT    | `/api/profile` | JWT  | Aktualizacja profilu z automatycznym przeliczeniem dziennego celu kalorii   |
+
+**Przykład — aktualizacja profilu:**
+```http
+PUT /api/profile
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "name": "Jan Kowalski",
+  "age": 28,
+  "weight": 75.5,
+  "height": 180,
+  "goal": "WEIGHT_LOSS"
+}
+```
+
+---
+
+### Dziennik posiłków — `/api/diary`
+
+Parametr `date` we wszystkich endpointach przyjmuje format **`YYYY-MM-DD`** (np. `date=2025-06-01`).
+
+| Metoda | Ścieżka             | Auth | Opis                                                                        |
+|--------|---------------------|------|-----------------------------------------------------------------------------|
+| GET    | `/api/diary`        | JWT  | Pobranie wpisów posiłków na dany dzień (`?date=YYYY-MM-DD`)                 |
+| POST   | `/api/diary`        | JWT  | Dodanie nowego wpisu do dziennika                                           |
+| PATCH  | `/api/diary/{id}`   | JWT  | Edycja ilości gramów wpisu (automatyczne przeliczenie kalorii i makro)      |
+| DELETE | `/api/diary/{id}`   | JWT  | Usunięcie wpisu posiłku                                                     |
+| GET    | `/api/diary/summary`| JWT  | Dziennie podsumowanie kalorii i makroskładników (`?date=YYYY-MM-DD`)        |
+
+**Przykład — dodanie wpisu:**
+```http
+POST /api/diary
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "productId": 42,
+  "grams": 150,
+  "mealType": "BREAKFAST",
+  "date": "2025-06-01"
+}
+```
+
+**Przykład odpowiedzi — summary:**
+```json
+{
+  "date": "2025-06-01",
+  "totalCalories": 1850,
+  "protein": 95.5,
+  "carbs": 210.0,
+  "fat": 62.3,
+  "dailyGoal": 2000
+}
+```
+
+---
+
+### Produkty spożywcze — `/api/products`
+
+| Metoda | Ścieżka        | Auth | Opis                                                         |
+|--------|----------------|------|--------------------------------------------------------------|
+| GET    | `/api/products`| JWT  | Wyszukiwanie produktów spożywczych (`?q=<fraza>`)            |
+
+- Parametr `q` — fraza wyszukiwania (np. `?q=kurczak`); wyszukiwanie pełnotekstowe po nazwie produktu
+- Zwraca listę produktów z wartościami odżywczymi na 100 g
+
+**Przykład:**
+```http
+GET /api/products?q=kurczak
+Authorization: Bearer <access_token>
+```
+
+**Przykład odpowiedzi:**
+```json
+[
+  {
+    "id": 42,
+    "name": "Kurczak pieczony",
+    "calories": 165,
+    "protein": 31.0,
+    "carbs": 0.0,
+    "fat": 3.6
+  }
+]
+```
+
+---
+
+### Przepisy — `/api/recipes`
+
+| Metoda | Ścieżka                      | Auth | Opis                                                                   |
+|--------|------------------------------|------|------------------------------------------------------------------------|
+| GET    | `/api/recipes`               | JWT  | Wyszukiwanie publicznych przepisów (`?q=<fraza>&tag=<tag>`)            |
+| GET    | `/api/recipes/mine`          | JWT  | Pobranie własnych przepisów zalogowanego użytkownika                   |
+| GET    | `/api/recipes/favorites`     | JWT  | Pobranie ulubionych przepisów użytkownika                              |
+| POST   | `/api/recipes`               | JWT  | Dodanie nowego przepisu                                                |
+| PUT    | `/api/recipes/{id}`          | JWT  | Edycja przepisu (tylko autor)                                          |
+| DELETE | `/api/recipes/{id}`          | JWT  | Usunięcie przepisu (tylko autor)                                       |
+| POST   | `/api/recipes/{id}/favorite` | JWT  | Dodanie przepisu do ulubionych                                         |
+| DELETE | `/api/recipes/{id}/favorite` | JWT  | Usunięcie przepisu z ulubionych                                        |
+
+**Parametry wyszukiwania (`GET /api/recipes`):**
+- `q` — fraza wyszukiwania pełnotekstowego po nazwie przepisu (opcjonalny)
+- `tag` — filtr po tagu (opcjonalny); przykładowe wartości: `HIGH_PROTEIN`, `LOW_CARB`, `VEGAN`, `VEGETARIAN`, `QUICK`
+
+**Przykład — dodanie przepisu:**
+```http
+POST /api/recipes
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "name": "Omlet z warzywami",
+  "description": "Szybkie śniadanie bogate w białko",
+  "tag": "HIGH_PROTEIN",
+  "ingredients": [
+    { "productId": 10, "grams": 200 },
+    { "productId": 55, "grams": 50 }
+  ]
+}
+```
+
+---
+
+### Treningi — `/api/workouts`
+
+Parametr `date` przyjmuje format **`YYYY-MM-DD`** (np. `date=2025-06-01`).
+
+| Metoda | Ścieżka               | Auth | Opis                                                         |
+|--------|-----------------------|------|--------------------------------------------------------------|
+| GET    | `/api/workouts`       | JWT  | Pobranie historii treningów na dany dzień (`?date=YYYY-MM-DD`) |
+| POST   | `/api/workouts`       | JWT  | Dodanie nowego treningu                                      |
+| PUT    | `/api/workouts/{id}`  | JWT  | Edycja istniejącego wpisu treningowego                       |
+| DELETE | `/api/workouts/{id}`  | JWT  | Usunięcie istniejącego wpisu treningowego                    |
+
+**Przykład — dodanie treningu:**
+```http
+POST /api/workouts
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "name": "Bieganie",
+  "durationMinutes": 45,
+  "caloriesBurned": 380,
+  "date": "2025-06-01"
+}
+```
+
+---
 
 ## Kody błędów
 
-Wszystkie błędy zwracane są w ujednoliconym formacie JSON obsługiwanym przez GlobalExceptionHandler.kt.
+Wszystkie błędy zwracane są w ujednoliconym formacie JSON obsługiwanym przez `GlobalExceptionHandler`.
 
-| Kod | Opis                                                                    |
-|-----|-------------------------------------------------------------------------|
-| 400 | Bad Request – Błędne dane wejściowe (np. błędy walidacji)               |
-| 401 | Unauthorized – Brak lub nieważny token JWT                              |
-| 403 | Forbidden – Brak uprawnień (np. edycja cudzego przepisu)                |
-| 404 | Not Found – Zasób nie istnieje (np. przepis o podanym ID)               |
-| 500 | Internal Server Error – Wewnętrzny błąd serwera                         |
+| Kod | Opis                                                                     |
+|-----|--------------------------------------------------------------------------|
+| 400 | Bad Request — błędne dane wejściowe lub błędy walidacji pól              |
+| 401 | Unauthorized — brak, nieważny lub wygasły token JWT                      |
+| 403 | Forbidden — brak uprawnień (np. edycja cudzego przepisu)                 |
+| 404 | Not Found — zasób nie istnieje (np. przepis o podanym ID)                |
+| 500 | Internal Server Error — wewnętrzny błąd serwera                          |
 
-Przykład odpowiedzi z błędem:
+**Format odpowiedzi z błędem:**
 ```json
 {
   "timestamp": "2025-06-01T12:00:00Z",
@@ -83,3 +226,12 @@ Przykład odpowiedzi z błędem:
   "error": "Bad Request",
   "message": "Pole email jest wymagane"
 }
+```
+
+---
+
+## Znane ograniczenia
+
+- Brak obsługi offline po stronie aplikacji — wszystkie dane pobierane są w czasie rzeczywistym z API (brak lokalnego cache Room).
+- Endpoint `GET /api/products` zwraca wyniki z bazy wewnętrznej; integracja z zewnętrznym źródłem danych (katalog `Backend/_external/`) może nie być kompletna.
+- Czas życia `access_token` i `refresh_token` nie jest publicznie udokumentowany — do weryfikacji w `AuthService`.

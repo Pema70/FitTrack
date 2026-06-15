@@ -18,16 +18,15 @@ GŁÓWNE FUNKCJE:
 🍽️ PRZEPISY NISKOKALORYCZNE
 • Przeglądaj bazę przepisów
 • Filtruj według kaloryczności i składników
-• Dodawaj, edytuj i usuwaj własne przepisy
+• Dodawaj i usuwaj własne przepisy
 • Zapisuj ulubione przepisy dla szybkiego dostępu
 
 👤 SPERSONALIZOWANY PROFIL
 • Podaj swój wiek, płeć, wagę i wzrost
 • Automatyczne obliczanie dziennego celu kalorycznego (BMR/TDEE wg wzoru Mifflina–St Jeora)
 
-🔔 POWIADOMIENIA I TRYB OFFLINE
+🔔 POWIADOMIENIA 
 • Przypomnienia o nawodnieniu przez cały dzień
-• Pełna funkcjonalność bez dostępu do internetu
 
 PRYWATNOŚĆ I BEZPIECZEŃSTWO
 Hasła są przechowywane przy użyciu hashowania BCrypt. Wszystkie dane są przesyłane przez HTTPS. Twoje dane należą do Ciebie.

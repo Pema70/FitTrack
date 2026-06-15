@@ -8,7 +8,7 @@ Dodawaj posiłki do dziennika i natychmiast sprawdzaj na czytelnym wskaźniku, i
 
 ## Przepisy niskokaloryczne
 
-Przeglądaj bazę przepisów, filtruj wyniki i dodawaj ulubione dania do zakładki „Ulubione". Masz własny sprawdzony przepis? Dodaj go do aplikacji – razem z listą składników, krokami przygotowania i szacowaną kalorycznością. Swoje przepisy możesz w każdej chwili edytować lub usunąć.
+Przeglądaj bazę przepisów, filtruj wyniki i dodawaj ulubione dania do zakładki „Ulubione". Masz własny sprawdzony przepis? Dodaj go do aplikacji – razem z listą składników, krokami przygotowania i szacowaną kalorycznością. Swoje przepisy możesz w każdej chwili usunąć.
 
 ## Dziennik treningów
 
