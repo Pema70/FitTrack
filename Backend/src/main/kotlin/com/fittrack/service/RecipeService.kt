@@ -14,6 +14,7 @@ class RecipeService(
     private val foodRepo: FoodProductRepository,
     private val favoriteRepo: FavoriteRecipeRepository
 ) {
+    @Transactional(readOnly = true)
     fun search(query: String, tag: String?, email: String?): List<RecipeResponse> {
         val results = if (!tag.isNullOrBlank()) recipeRepo.findPublicByTag(tag)
                       else recipeRepo.searchPublic(query)
@@ -24,12 +25,14 @@ class RecipeService(
         return results.map { it.toResponse(user?.id, favorites) }
     }
 
+    @Transactional(readOnly = true)
     fun getMine(email: String): List<RecipeResponse> {
         val user = userRepo.findByEmail(email).orElseThrow()
         val favorites = favoriteRepo.findAllByUserId(user.id).map { f -> f.recipe.id }.toSet()
         return recipeRepo.findAllByAuthorId(user.id).map { it.toResponse(user.id, favorites) }
     }
 
+    @Transactional(readOnly = true)
     fun getFavorites(email: String): List<RecipeResponse> {
         val user = userRepo.findByEmail(email).orElseThrow()
         val favoriteRecipes = favoriteRepo.findAllByUserId(user.id).map { it.recipe }

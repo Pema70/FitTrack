@@ -1,7 +1,10 @@
 package com.fittrack.ui.recipes
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,6 +17,10 @@ import com.fittrack.util.Resource
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @AndroidEntryPoint
 class AddRecipeFragment : Fragment(R.layout.fragment_add_recipe) {
@@ -22,9 +29,26 @@ class AddRecipeFragment : Fragment(R.layout.fragment_add_recipe) {
     private var _b: FragmentAddRecipeBinding? = null
     private val b get() = _b!!
 
+    private var photoFile: File? = null
+    private var photoUri: Uri? = null
+
+    private val takePicture =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { ok ->
+            if (ok && photoFile != null) {
+                b.ivPreview.isVisible = true
+                b.ivPreview.setImageURI(Uri.fromFile(photoFile))
+            } else {
+                Snackbar.make(b.root, "Anulowano zdjęcie", Snackbar.LENGTH_SHORT).show()
+            }
+        }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _b = FragmentAddRecipeBinding.bind(view)
+
+        b.btnCapturePhoto.setOnClickListener {
+            launchCamera()
+        }
 
         b.btnSave.setOnClickListener {
             saveRecipe()
@@ -51,6 +75,19 @@ class AddRecipeFragment : Fragment(R.layout.fragment_add_recipe) {
         }
     }
 
+    private fun launchCamera() {
+        val dir = File(requireContext().filesDir, "recipe_photos").apply { mkdirs() }
+        val stamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val file = File(dir, "recipe_$stamp.jpg")
+        photoFile = file
+        photoUri = FileProvider.getUriForFile(
+            requireContext(),
+            "${requireContext().packageName}.fileprovider",
+            file
+        )
+        takePicture.launch(photoUri!!)
+    }
+
     private fun saveRecipe() {
         val title = b.etTitle.text.toString().trim()
         val desc = b.etDescription.text.toString().trim()
@@ -61,13 +98,14 @@ class AddRecipeFragment : Fragment(R.layout.fragment_add_recipe) {
         val time = b.etTime.text.toString().toIntOrNull() ?: 1
         val servings = b.etServings.text.toString().toIntOrNull() ?: 1
         val tagsInput = b.etTags.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
-        val imageUrl = b.etImageUrl.text.toString().trim().takeIf { it.isNotEmpty() }
+        val imageUrl = photoFile?.absolutePath
 
         if (title.isEmpty()) {
             b.etTitle.error = "Tytuł jest wymagany"
             return
         }
 
+        // Czas przygotowania musi być >= 1
         val validatedTime = if (time < 1) 1 else time
 
         val request = RecipeRequest(
