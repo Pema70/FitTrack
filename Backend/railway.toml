@@ -3,5 +3,5 @@ builder = "nixpacks"
 buildCommand = "chmod +x gradlew && ./gradlew bootJar -x test"
 
 [deploy]
-startCommand = "java -jar build/libs/fittrack-1.0.0.jar"
+startCommand = "java -jar build/libs/*.jar"
 healthcheckPath = "/swagger-ui.html"
