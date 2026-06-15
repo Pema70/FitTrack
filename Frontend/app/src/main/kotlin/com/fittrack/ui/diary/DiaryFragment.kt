@@ -174,7 +174,8 @@ class DiaryFragment : Fragment(R.layout.fragment_diary) {
             .setPositiveButton("Dodaj") { _, _ ->
                 val q = input.text.toString().toDoubleOrNull() ?: 100.0
                 vm.addEntry(DiaryEntryRequest(
-                    productId = product.id,
+                    productId = if (product.isRecipe) null else product.id,
+                    recipeId = if (product.isRecipe) product.id else null,
                     quantityG = q,
                     mealType  = mealTypes[selectedMeal],
                     entryDate = vm.currentDate.toString()

@@ -14,25 +14,50 @@ class DiaryService(
     private val profileRepo: UserProfileRepository,
     private val diaryRepo: DiaryEntryRepository,
     private val foodRepo: FoodProductRepository,
+    private val recipeRepo: RecipeRepository,
     private val workoutRepo: WorkoutActivityRepository
 ) {
     @Transactional
     fun addEntry(email: String, req: DiaryEntryRequest): DiaryEntryResponse {
         val user = userRepo.findByEmail(email).orElseThrow()
         val product = req.productId?.let { foodRepo.findById(it).orElseThrow() }
+        val recipe = req.recipeId?.let { recipeRepo.findById(it).orElseThrow() }
+        
         val factor = req.quantityG.divide(BigDecimal(100))
+        
+        val kcal = when {
+            product != null -> product.kcalPer100g * factor
+            recipe != null  -> recipe.kcalPerServing * factor
+            else -> BigDecimal.ZERO
+        }
+        val prot = when {
+            product != null -> product.proteinG * factor
+            recipe != null  -> recipe.proteinG * factor
+            else -> BigDecimal.ZERO
+        }
+        val fat = when {
+            product != null -> product.fatG * factor
+            recipe != null  -> recipe.fatG * factor
+            else -> BigDecimal.ZERO
+        }
+        val carbs = when {
+            product != null -> product.carbsG * factor
+            recipe != null  -> recipe.carbsG * factor
+            else -> BigDecimal.ZERO
+        }
+
         val entry = diaryRepo.save(DiaryEntry(
             user       = user,
             entryDate  = req.entryDate,
             mealType   = req.mealType,
             product    = product,
-            recipeId   = req.recipeId,
+            recipe     = recipe,
             customName = req.customName,
             quantityG  = req.quantityG,
-            kcal       = product?.kcalPer100g?.multiply(factor) ?: BigDecimal.ZERO,
-            proteinG   = product?.proteinG?.multiply(factor) ?: BigDecimal.ZERO,
-            fatG       = product?.fatG?.multiply(factor) ?: BigDecimal.ZERO,
-            carbsG     = product?.carbsG?.multiply(factor) ?: BigDecimal.ZERO,
+            kcal       = kcal,
+            proteinG   = prot,
+            fatG       = fat,
+            carbsG     = carbs,
             photoPath  = req.photoPath,
             note       = req.note,
             synced     = req.synced
@@ -50,12 +75,31 @@ class DiaryService(
         val user  = userRepo.findByEmail(email).orElseThrow()
         val entry = diaryRepo.findById(entryId).orElseThrow()
         require(entry.user.id == user.id) { "Brak uprawnień" }
+        
         val factor = req.quantityG.divide(BigDecimal(100))
         entry.quantityG = req.quantityG
-        entry.kcal    = entry.product?.kcalPer100g?.multiply(factor) ?: BigDecimal.ZERO
-        entry.proteinG = entry.product?.proteinG?.multiply(factor) ?: BigDecimal.ZERO
-        entry.fatG     = entry.product?.fatG?.multiply(factor) ?: BigDecimal.ZERO
-        entry.carbsG   = entry.product?.carbsG?.multiply(factor) ?: BigDecimal.ZERO
+        
+        entry.kcal = when {
+            entry.product != null -> entry.product!!.kcalPer100g * factor
+            entry.recipe != null  -> entry.recipe!!.kcalPerServing * factor
+            else -> BigDecimal.ZERO
+        }
+        entry.proteinG = when {
+            entry.product != null -> entry.product!!.proteinG * factor
+            entry.recipe != null  -> entry.recipe!!.proteinG * factor
+            else -> BigDecimal.ZERO
+        }
+        entry.fatG = when {
+            entry.product != null -> entry.product!!.fatG * factor
+            entry.recipe != null  -> entry.recipe!!.fatG * factor
+            else -> BigDecimal.ZERO
+        }
+        entry.carbsG = when {
+            entry.product != null -> entry.product!!.carbsG * factor
+            entry.recipe != null  -> entry.recipe!!.carbsG * factor
+            else -> BigDecimal.ZERO
+        }
+
         return diaryRepo.save(entry).toResponse()
     }
 
@@ -91,7 +135,7 @@ class DiaryService(
         id          = id,
         entryDate   = entryDate,
         mealType    = mealType,
-        productName = product?.name ?: customName,
+        productName = product?.name ?: recipe?.title ?: customName,
         quantityG   = quantityG,
         kcal        = kcal,
         proteinG    = proteinG,

@@ -27,7 +27,7 @@ class RecipesFragment : Fragment(R.layout.fragment_recipes) {
     private val b get() = _b!!
     private lateinit var adapter: RecipeAdapter
 
-    private val tags = listOf("wege", "bez_laktozy", "bezglutenowe", "< 400 kcal", "wysokobiałkowe")
+    private val tags = listOf("wege", "bez_laktozy", "bezglutenowe", "<400", "wysokobiałkowe")
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -82,6 +82,10 @@ class RecipesFragment : Fragment(R.layout.fragment_recipes) {
         b.etSearch.addTextChangedListener { editable ->
             val q = editable.toString()
             if (q.length >= 3 || q.isEmpty()) vm.loadAll(q)
+        }
+
+        b.fabAddRecipe.setOnClickListener {
+            findNavController().navigate(R.id.action_recipesFragment_to_addRecipeFragment)
         }
 
         lifecycleScope.launch {

@@ -220,6 +220,11 @@ data class RecipeRequest(
         String
     > = emptySet(),
 
+    val kcalPerServing: BigDecimal? = null,
+    val proteinG: BigDecimal? = null,
+    val fatG: BigDecimal? = null,
+    val carbsG: BigDecimal? = null,
+
     @field:Size(max = 50, message = "Przepis może mieć maksymalnie 50 składników")
     @field:Valid
     val ingredients: List<RecipeIngredientRequest> = emptyList()
@@ -239,7 +244,8 @@ data class RecipeResponse(
     val carbsG: BigDecimal,
     val tags: Set<String>,
     val isPublic: Boolean,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val isOwner: Boolean = false
 )
 
 // =================== WORKOUT ===================

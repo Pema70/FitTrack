@@ -2,6 +2,7 @@ package com.fittrack.ui.recipes
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -9,9 +10,9 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.fittrack.R
 import com.fittrack.databinding.FragmentRecipeDetailBinding
-import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
 @AndroidEntryPoint
 class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_detail) {
@@ -29,32 +30,44 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_detail) {
 
         b.tvTitle.text    = r.title
         b.tvDescription.text = r.description ?: ""
-        b.tvKcal.text     = "${r.kcalPerServing.toInt()} kcal / porcja"
-        b.tvMacros.text   = "B: ${r.proteinG.toInt()}g  •  T: ${r.fatG.toInt()}g  •  W: ${r.carbsG.toInt()}g"
+
+        val kcalStr = formatNutrition(r.kcalPerServing ?: 0.0)
+        val pStr = formatNutrition(r.proteinG ?: 0.0)
+        val fStr = formatNutrition(r.fatG ?: 0.0)
+        val cStr = formatNutrition(r.carbsG ?: 0.0)
+
+        b.tvKcal.text     = "$kcalStr kcal / porcja"
+        b.tvMacros.text   = "B: ${pStr}g  •  T: ${fStr}g  •  W: ${cStr}g"
         b.tvTime.text     = r.prepTimeMin?.let { "⏱ $it min" } ?: ""
-        b.tvServings.text = "Porcji: ${r.servings}"
-        b.tvTags.text     = r.tags.joinToString(" · ")
+        b.tvServings.text = "Porcji: ${r.servings ?: 1}"
+        b.tvTags.text     = r.tags?.joinToString(" · ") ?: ""
 
         Glide.with(this)
             .load(r.imageUrl)
             .placeholder(R.drawable.ic_recipe_placeholder)
             .into(b.ivHero)
 
-        // Ulubione
-        updateFavoriteIcon(r.isFavorite)
+        updateFavoriteIcon(r.isFavorite == true)
         b.btnFavorite.setOnClickListener {
             vm.toggleFavorite(r)
-            val nowFav = !r.isFavorite
+            val nowFav = !(r.isFavorite == true)
             updateFavoriteIcon(nowFav)
             val msg = if (nowFav) "Dodano do ulubionych" else "Usunięto z ulubionych"
             Snackbar.make(view, msg, Snackbar.LENGTH_SHORT).show()
         }
 
-        // Usuń (tylko autor)
-        b.btnDelete.isVisible = true   // widoczność kontroluje backend (403 jeśli nie autor)
+        b.btnDelete.isVisible = r.isOwner == true
         b.btnDelete.setOnClickListener {
             vm.deleteRecipe(r.id)
             findNavController().popBackStack()
+        }
+    }
+
+    private fun formatNutrition(value: Double): String {
+        return if (value % 1.0 == 0.0) {
+            value.toInt().toString()
+        } else {
+            String.format(Locale.US, "%.1f", value)
         }
     }
 

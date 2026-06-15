@@ -30,7 +30,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         super.onViewCreated(view, savedInstanceState)
         _b = FragmentProfileBinding.bind(view)
 
-        // Wczytaj profil → wypełnij pola
         lifecycleScope.launch {
             vm.profile.collect { state ->
                 b.progressBar.isVisible = state is Resource.Loading
@@ -45,14 +44,14 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                         "MALE"   -> b.rgGender.check(R.id.rbMale)
                         "FEMALE" -> b.rgGender.check(R.id.rbFemale)
                     }
-                    // Spinner aktywności
-                    val levels = resources.getStringArray(R.array.activity_levels)
-                    val idx = levels.indexOfFirst { it.startsWith(p.activityLevel ?: "") }
+                    val activityValues = resources.getStringArray(R.array.activity_levels_values)
+                    val idx = activityValues.indexOf(p.activityLevel ?: "")
                     if (idx >= 0) b.spinnerActivity.setSelection(idx)
+
                     when (p.goal) {
-                        "LOSE"     -> b.rgGoal.check(R.id.rbLose)
-                        "MAINTAIN" -> b.rgGoal.check(R.id.rbMaintain)
-                        "GAIN"     -> b.rgGoal.check(R.id.rbGain)
+                        "LOSE_WEIGHT"  -> b.rgGoal.check(R.id.rbLose)
+                        "MAINTAIN"     -> b.rgGoal.check(R.id.rbMaintain)
+                        "GAIN_MUSCLE"  -> b.rgGoal.check(R.id.rbGain)
                     }
                 }
             }
@@ -60,8 +59,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         b.etBirthDate.setOnClickListener { showDatePicker() }
 
-        // Zapisz profil
         b.btnSave.setOnClickListener {
+            val activityValues = resources.getStringArray(R.array.activity_levels_values)
+            val activityLevel = activityValues.getOrNull(b.spinnerActivity.selectedItemPosition)
+
             vm.updateProfile(ProfileUpdateRequest(
                 displayName   = b.etName.text.toString().ifBlank { null },
                 gender        = when (b.rgGender.checkedRadioButtonId) {
@@ -72,8 +73,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 birthDate     = b.etBirthDate.text.toString().ifBlank { null },
                 weightKg      = b.etWeight.text.toString().toDoubleOrNull(),
                 heightCm      = b.etHeight.text.toString().toDoubleOrNull(),
-                activityLevel = b.spinnerActivity.selectedItem?.toString(),
-                goal = when (b.rgGoal.checkedRadioButtonId) { R.id.rbLose -> "LOSE"; R.id.rbMaintain -> "MAINTAIN"; R.id.rbGain -> "GAIN"; else -> null }
+                activityLevel = activityLevel,
+                goal          = when (b.rgGoal.checkedRadioButtonId) {
+                    R.id.rbLose     -> "LOSE_WEIGHT"
+                    R.id.rbMaintain -> "MAINTAIN"
+                    R.id.rbGain     -> "GAIN_MUSCLE"
+                    else            -> null
+                }
             ))
         }
 
@@ -89,10 +95,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             }
         }
 
-        // Zmiana hasła
         b.btnChangePassword.setOnClickListener { showChangePasswordDialog() }
 
-        // Wyloguj
         b.btnLogout.setOnClickListener {
             vm.logout()
             findNavController().navigate(R.id.profile_to_login)

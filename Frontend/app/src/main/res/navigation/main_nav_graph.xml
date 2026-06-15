@@ -18,6 +18,8 @@
         android:label="@string/tab_recipes">
         <action android:id="@+id/main_to_recipe_detail"
             app:destination="@id/recipeDetailFragment"/>
+        <action android:id="@+id/action_recipesFragment_to_addRecipeFragment"
+            app:destination="@id/addRecipeFragment" />
     </fragment>
 
     <!-- 3) Trening -->
@@ -41,4 +43,9 @@
         <argument android:name="recipe"
             app:argType="com.fittrack.data.model.RecipeResponse"/>
     </fragment>
+
+    <fragment
+        android:id="@+id/addRecipeFragment"
+        android:name="com.fittrack.ui.recipes.AddRecipeFragment"
+        android:label="Dodaj przepis" />
 </navigation>

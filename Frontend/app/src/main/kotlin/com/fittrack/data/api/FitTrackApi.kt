@@ -78,4 +78,7 @@ interface FitTrackApi {
     // Products
     @GET("products")
     suspend fun searchProducts(@Query("q") query: String): List<ProductResponse>
+
+    @POST("recipes")
+    suspend fun addRecipe(@Body request: RecipeRequest): RecipeResponse
 }

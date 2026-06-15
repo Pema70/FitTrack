@@ -42,6 +42,7 @@ class RecipeServiceTest {
         )
         val slot = slot<Recipe>()
         every { recipeRepo.save(capture(slot)) } answers { slot.captured.apply { id = 50L } }
+        every { favoriteRepo.findAllByUserId(1L) } returns emptyList()
 
         val resp = service.create(
             "u@fittrack.pl", RecipeRequest(
@@ -67,9 +68,43 @@ class RecipeServiceTest {
     }
 
     @Test
+    fun `tworzy przepis z recznie podanymi wartosciami odzywczymi bez skladnikow`() {
+        val u = User(id = 1L, email = "u@fittrack.pl", password = "x")
+        every { userRepo.findByEmail("u@fittrack.pl") } returns Optional.of(u)
+        
+        val slot = slot<Recipe>()
+        every { recipeRepo.save(capture(slot)) } answers { slot.captured.apply { id = 51L } }
+        every { favoriteRepo.findAllByUserId(1L) } returns emptyList()
+
+        val resp = service.create(
+            "u@fittrack.pl", RecipeRequest(
+                title       = "Reczny przepis",
+                description = "Bez skladnikow",
+                imageUrl    = null,
+                prepTimeMin = 10,
+                servings    = 1,
+                isPublic    = true,
+                tags        = mutableSetOf("fast"),
+                kcalPerServing = BigDecimal("500"),
+                proteinG       = BigDecimal("30"),
+                fatG           = BigDecimal("15"),
+                carbsG         = BigDecimal("60"),
+                ingredients    = emptyList()
+            )
+        )
+
+        assertEquals(0, BigDecimal("500").compareTo(resp.kcalPerServing))
+        assertEquals(0, BigDecimal("30").compareTo(resp.proteinG))
+        assertEquals(0, BigDecimal("15").compareTo(resp.fatG))
+        assertEquals(0, BigDecimal("60").compareTo(resp.carbsG))
+        assertEquals("Reczny przepis", resp.title)
+        assertTrue(slot.captured.ingredients.isEmpty())
+    }
+
+    @Test
     fun `search bez tagu wola searchPublic`() {
         every { recipeRepo.searchPublic("kurczak") } returns emptyList()
-        val results = service.search("kurczak", null)
+        val results = service.search("kurczak", null, null)
         assertTrue(results.isEmpty())
         verify { recipeRepo.searchPublic("kurczak") }
     }
@@ -77,7 +112,7 @@ class RecipeServiceTest {
     @Test
     fun `search z tagiem wola findPublicByTag`() {
         every { recipeRepo.findPublicByTag("wege") } returns emptyList()
-        service.search("", "wege")
+        service.search("", "wege", null)
         verify { recipeRepo.findPublicByTag("wege") }
     }
 
@@ -86,11 +121,13 @@ class RecipeServiceTest {
         val u = User(id = 1L, email = "u@fittrack.pl", password = "x")
         every { userRepo.findByEmail("u@fittrack.pl") } returns Optional.of(u)
         val recipe = Recipe(id = 10L, author = u, title = "Moj przepis", servings = 1)
-        every { recipeRepo.findAllByAuthorId(1L) } returns listOf(recipe)              
+        every { recipeRepo.findAllByAuthorId(1L) } returns listOf(recipe)
+        every { favoriteRepo.findAllByUserId(1L) } returns emptyList()
 
         val results = service.getMine("u@fittrack.pl")
         assertEquals(1, results.size)
         assertEquals("Moj przepis", results[0].title)
+        assertTrue(results[0].isOwner)
     }
 
     @Test
@@ -140,6 +177,7 @@ class RecipeServiceTest {
         )
         val slot = slot<Recipe>()
         every { recipeRepo.save(capture(slot)) } answers { slot.captured }
+        every { favoriteRepo.findAllByUserId(1L) } returns emptyList()
 
         val req = RecipeRequest(
             title       = "Nowy tytul",
@@ -169,8 +207,9 @@ class RecipeServiceTest {
 
         val recipe = Recipe(id = 10L, author = victim, title = "Cudzy przepis", servings = 1)
         every { recipeRepo.findById(10L) } returns Optional.of(recipe)
+        every { favoriteRepo.findAllByUserId(1L) } returns emptyList()
 
-        val req = RecipeRequest("T", "D", null, 10, 1, true, mutableSetOf(), emptyList())
+        val req = RecipeRequest("T", "D", null, 10, 1, true, mutableSetOf(), null, null, null, null, emptyList())
 
         val ex = assertThrows<IllegalArgumentException> {
             service.update("haker@fittrack.pl", 10L, req)

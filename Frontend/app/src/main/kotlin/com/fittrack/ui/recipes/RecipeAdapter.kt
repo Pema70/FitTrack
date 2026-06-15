@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.fittrack.R
 import com.fittrack.data.model.RecipeResponse
 import com.fittrack.databinding.ItemRecipeBinding
+import java.util.Locale
 
 class RecipeAdapter(
     private val onItemClick: (RecipeResponse) -> Unit,
@@ -19,9 +20,11 @@ class RecipeAdapter(
 
     inner class VH(private val b: ItemRecipeBinding) : RecyclerView.ViewHolder(b.root) {
         fun bind(r: RecipeResponse) {
+            val kcalValue = r.kcalPerServing ?: 0.0
             b.tvTitle.text    = r.title
-            b.tvKcal.text     = "${r.kcalPerServing.toInt()} kcal"
-            b.tvTags.text     = r.tags.take(3).joinToString(" · ")
+            val kcalStr = if (kcalValue % 1.0 == 0.0) kcalValue.toInt().toString() else String.format(Locale.US, "%.1f", kcalValue)
+            b.tvKcal.text     = "$kcalStr kcal"
+            b.tvTags.text     = r.tags?.take(3)?.joinToString(" · ") ?: ""
             b.tvTime.text     = r.prepTimeMin?.let { "⏱ $it min" } ?: ""
 
             Glide.with(b.root)
@@ -31,12 +34,11 @@ class RecipeAdapter(
                 .into(b.ivThumbnail)
 
             b.btnFavorite.setIconResource(
-                if (r.isFavorite) R.drawable.ic_favorite_filled
+                if (r.isFavorite == true) R.drawable.ic_favorite_filled
                 else R.drawable.ic_favorite_border
             )
 
-            // Przycisk usuń widoczny tylko jeśli przepis należy do użytkownika
-            b.btnDelete.isVisible = r.isOwner
+            b.btnDelete.isVisible = r.isOwner == true
 
             b.root.setOnClickListener      { onItemClick(r) }
             b.btnFavorite.setOnClickListener { onFavoriteClick(r) }

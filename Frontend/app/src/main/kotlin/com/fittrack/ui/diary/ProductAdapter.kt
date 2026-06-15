@@ -15,7 +15,8 @@ class ProductAdapter(
     inner class VH(private val b: ItemProductBinding) : RecyclerView.ViewHolder(b.root) {
         fun bind(p: ProductResponse) {
             b.tvProductName.text = p.name
-            b.tvProductKcal.text = "${p.kcalPer100g.toInt()} kcal / 100g"
+            val unit = if (p.isRecipe) "porcja" else "100g"
+            b.tvProductKcal.text = "${p.kcalPer100g.toInt()} kcal / $unit"
             b.tvProductMacros.text = "B: ${p.proteinPer100g}g  T: ${p.fatPer100g}g  W: ${p.carbsPer100g}g"
             b.root.setOnClickListener { onPick(p) }
         }
@@ -29,7 +30,8 @@ class ProductAdapter(
 
     companion object {
         val DIFF = object : DiffUtil.ItemCallback<ProductResponse>() {
-            override fun areItemsTheSame(a: ProductResponse, b: ProductResponse) = a.id == b.id
+            override fun areItemsTheSame(a: ProductResponse, b: ProductResponse) =
+                a.id == b.id && a.isRecipe == b.isRecipe
             override fun areContentsTheSame(a: ProductResponse, b: ProductResponse) = a == b
         }
     }

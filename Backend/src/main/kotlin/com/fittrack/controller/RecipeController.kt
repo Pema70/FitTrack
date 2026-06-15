@@ -23,6 +23,8 @@ class RecipeController(private val recipeService: RecipeService) {
     @Operation(summary = "Wyszukaj publiczne przepisy")
     @GetMapping
     fun search(
+        @AuthenticationPrincipal ud: UserDetails?,
+
         @RequestParam(defaultValue = "")
         @Size(max = 100, message = "Fraza wyszukiwania może mieć max 100 znaków")
         q: String,
@@ -30,7 +32,7 @@ class RecipeController(private val recipeService: RecipeService) {
         @RequestParam(required = false)
         @Size(max = 30, message = "Tag może mieć max 30 znaków")
         tag: String?
-    ) = recipeService.search(q, tag)
+    ) = recipeService.search(q, tag, ud?.username)
 
     @Operation(summary = "Moje przepisy (tylko autora)")
     @GetMapping("/mine")

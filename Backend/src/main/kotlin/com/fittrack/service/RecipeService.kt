@@ -14,20 +14,27 @@ class RecipeService(
     private val foodRepo: FoodProductRepository,
     private val favoriteRepo: FavoriteRecipeRepository
 ) {
-    fun search(query: String, tag: String?): List<RecipeResponse> {
+    fun search(query: String, tag: String?, email: String?): List<RecipeResponse> {
         val results = if (!tag.isNullOrBlank()) recipeRepo.findPublicByTag(tag)
                       else recipeRepo.searchPublic(query)
-        return results.map { it.toResponse() }
+        
+        val user = email?.let { userRepo.findByEmail(it).orElse(null) }
+        val favorites = user?.let { favoriteRepo.findAllByUserId(it.id).map { f -> f.recipe.id }.toSet() } ?: emptySet()
+        
+        return results.map { it.toResponse(user?.id, favorites) }
     }
 
     fun getMine(email: String): List<RecipeResponse> {
         val user = userRepo.findByEmail(email).orElseThrow()
-        return recipeRepo.findAllByAuthorId(user.id).map { it.toResponse() }
+        val favorites = favoriteRepo.findAllByUserId(user.id).map { f -> f.recipe.id }.toSet()
+        return recipeRepo.findAllByAuthorId(user.id).map { it.toResponse(user.id, favorites) }
     }
 
     fun getFavorites(email: String): List<RecipeResponse> {
         val user = userRepo.findByEmail(email).orElseThrow()
-        return favoriteRepo.findAllByUserId(user.id).map { it.recipe.toResponse() }
+        val favoriteRecipes = favoriteRepo.findAllByUserId(user.id).map { it.recipe }
+        val favoriteIds = favoriteRecipes.map { it.id }.toSet()
+        return favoriteRecipes.map { it.toResponse(user.id, favoriteIds) }
     }
 
     @Transactional
@@ -58,31 +65,42 @@ class RecipeService(
             isPublic    = req.isPublic
         )
         recipe.tags.addAll(req.tags)
-        var totalKcal  = BigDecimal.ZERO
-        var totalProt  = BigDecimal.ZERO
-        var totalFat   = BigDecimal.ZERO
-        var totalCarbs = BigDecimal.ZERO
-        req.ingredients.forEachIndexed { i, ing ->
-            val product = foodRepo.findById(ing.productId).orElseThrow()
-            val factor  = ing.quantityG.divide(BigDecimal(100))
-            totalKcal  += product.kcalPer100g * factor
-            totalProt  += product.proteinG    * factor
-            totalFat   += product.fatG        * factor
-            totalCarbs += product.carbsG      * factor
-            recipe.ingredients.add(RecipeIngredient(
-                recipe    = recipe,
-                product   = product,
-                quantityG = ing.quantityG,
-                unit      = ing.unit,
-                sortOrder = i
-            ))
+        
+        if (req.ingredients.isEmpty()) {
+            recipe.kcalPerServing = req.kcalPerServing ?: BigDecimal.ZERO
+            recipe.proteinG       = req.proteinG       ?: BigDecimal.ZERO
+            recipe.fatG           = req.fatG           ?: BigDecimal.ZERO
+            recipe.carbsG         = req.carbsG         ?: BigDecimal.ZERO
+        } else {
+            var totalKcal  = BigDecimal.ZERO
+            var totalProt  = BigDecimal.ZERO
+            var totalFat   = BigDecimal.ZERO
+            var totalCarbs = BigDecimal.ZERO
+            req.ingredients.forEachIndexed { i, ing ->
+                val product = foodRepo.findById(ing.productId).orElseThrow()
+                val factor  = ing.quantityG.divide(BigDecimal(100))
+                totalKcal  += product.kcalPer100g * factor
+                totalProt  += product.proteinG    * factor
+                totalFat   += product.fatG        * factor
+                totalCarbs += product.carbsG      * factor
+                recipe.ingredients.add(RecipeIngredient(
+                    recipe    = recipe,
+                    product   = product,
+                    quantityG = ing.quantityG,
+                    unit      = ing.unit,
+                    sortOrder = i
+                ))
+            }
+            val s = BigDecimal(req.servings)
+            recipe.kcalPerServing = totalKcal  / s
+            recipe.proteinG       = totalProt  / s
+            recipe.fatG           = totalFat   / s
+            recipe.carbsG         = totalCarbs / s
         }
-        val s = BigDecimal(req.servings)
-        recipe.kcalPerServing = totalKcal  / s
-        recipe.proteinG       = totalProt  / s
-        recipe.fatG           = totalFat   / s
-        recipe.carbsG         = totalCarbs / s
-        return recipeRepo.save(recipe).toResponse()
+        
+        val saved = recipeRepo.save(recipe)
+        val favorites = favoriteRepo.findAllByUserId(user.id).map { f -> f.recipe.id }.toSet()
+        return saved.toResponse(user.id, favorites)
     }
 
     @Transactional
@@ -99,31 +117,42 @@ class RecipeService(
         recipe.tags.clear()
         recipe.tags.addAll(req.tags)
         recipe.ingredients.clear()
-        var totalKcal  = BigDecimal.ZERO
-        var totalProt  = BigDecimal.ZERO
-        var totalFat   = BigDecimal.ZERO
-        var totalCarbs = BigDecimal.ZERO
-        req.ingredients.forEachIndexed { i, ing ->
-            val product = foodRepo.findById(ing.productId).orElseThrow()
-            val factor  = ing.quantityG.divide(BigDecimal(100))
-            totalKcal  += product.kcalPer100g * factor
-            totalProt  += product.proteinG    * factor
-            totalFat   += product.fatG        * factor
-            totalCarbs += product.carbsG      * factor
-            recipe.ingredients.add(RecipeIngredient(
-                recipe    = recipe,
-                product   = product,
-                quantityG = ing.quantityG,
-                unit      = ing.unit,
-                sortOrder = i
-            ))
+
+        if (req.ingredients.isEmpty()) {
+            recipe.kcalPerServing = req.kcalPerServing ?: BigDecimal.ZERO
+            recipe.proteinG       = req.proteinG       ?: BigDecimal.ZERO
+            recipe.fatG           = req.fatG           ?: BigDecimal.ZERO
+            recipe.carbsG         = req.carbsG         ?: BigDecimal.ZERO
+        } else {
+            var totalKcal  = BigDecimal.ZERO
+            var totalProt  = BigDecimal.ZERO
+            var totalFat   = BigDecimal.ZERO
+            var totalCarbs = BigDecimal.ZERO
+            req.ingredients.forEachIndexed { i, ing ->
+                val product = foodRepo.findById(ing.productId).orElseThrow()
+                val factor  = ing.quantityG.divide(BigDecimal(100))
+                totalKcal  += product.kcalPer100g * factor
+                totalProt  += product.proteinG    * factor
+                totalFat   += product.fatG        * factor
+                totalCarbs += product.carbsG      * factor
+                recipe.ingredients.add(RecipeIngredient(
+                    recipe    = recipe,
+                    product   = product,
+                    quantityG = ing.quantityG,
+                    unit      = ing.unit,
+                    sortOrder = i
+                ))
+            }
+            val s = BigDecimal(req.servings)
+            recipe.kcalPerServing = totalKcal  / s
+            recipe.proteinG       = totalProt  / s
+            recipe.fatG           = totalFat   / s
+            recipe.carbsG         = totalCarbs / s
         }
-        val s = BigDecimal(req.servings)
-        recipe.kcalPerServing = totalKcal  / s
-        recipe.proteinG       = totalProt  / s
-        recipe.fatG           = totalFat   / s
-        recipe.carbsG         = totalCarbs / s
-        return recipeRepo.save(recipe).toResponse()
+        
+        val saved = recipeRepo.save(recipe)
+        val favorites = favoriteRepo.findAllByUserId(user.id).map { f -> f.recipe.id }.toSet()
+        return saved.toResponse(user.id, favorites)
     }
 
     @Transactional
@@ -134,7 +163,7 @@ class RecipeService(
         recipeRepo.delete(recipe)
     }
 
-    private fun Recipe.toResponse() = RecipeResponse(
+    private fun Recipe.toResponse(currentUserId: Long? = null, favorites: Set<Long> = emptySet()) = RecipeResponse(
         id             = id,
         authorId       = author.id,
         title          = title,
@@ -147,6 +176,8 @@ class RecipeService(
         fatG           = fatG,
         carbsG         = carbsG,
         tags           = tags,
-        isPublic       = isPublic
+        isPublic       = isPublic,
+        isFavorite     = favorites.contains(id),
+        isOwner        = currentUserId != null && author.id == currentUserId
     )
 }

@@ -70,14 +70,6 @@
     <string name="goal_gain">Przytyć</string>
     <string name="btn_save">Zapisz</string>
 
-    <!-- Activity levels (Spinner) -->
-    <string-array name="activity_levels">
-        <item>Siedzący tryb życia</item>
-        <item>Niska aktywność</item>
-        <item>Umiarkowana aktywność</item>
-        <item>Wysoka aktywność</item>
-        <item>Bardzo wysoka aktywność</item>
-    </string-array>
 
     <!-- Notifications -->
     <string name="notif_channel_general">FitTrack — ogólne</string>

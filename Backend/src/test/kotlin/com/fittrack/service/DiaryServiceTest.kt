@@ -16,8 +16,9 @@ class DiaryServiceTest {
     private val profileRepo: UserProfileRepository = mockk()
     private val diaryRepo: DiaryEntryRepository = mockk()
     private val foodRepo: FoodProductRepository = mockk()
+    private val recipeRepo: RecipeRepository = mockk()
     private val workoutRepo: WorkoutActivityRepository = mockk()
-    private val service = DiaryService(userRepo, profileRepo, diaryRepo, foodRepo, workoutRepo)
+    private val service = DiaryService(userRepo, profileRepo, diaryRepo, foodRepo, recipeRepo, workoutRepo)
 
     private fun setupUser(): User {
         val u = User(id = 1L, email = "u@fittrack.pl", password = "x")
@@ -52,6 +53,36 @@ class DiaryServiceTest {
         // 89 * 150 / 100 = 133.50
         assertEquals(0, BigDecimal("133.50").compareTo(resp.kcal))
         assertEquals("Banan", resp.productName)
+    }
+
+    @Test
+    fun `dodaje wpis z przepisu - kcal liczony na porcje`() {
+        val u = setupUser()
+        val recipe = Recipe(
+            id = 50L,
+            author = u,
+            title = "Owsianka",
+            kcalPerServing = BigDecimal("400"),
+            proteinG = BigDecimal("15"),
+            fatG = BigDecimal("8"),
+            carbsG = BigDecimal("60"),
+            servings = 1
+        )
+        every { recipeRepo.findById(50L) } returns Optional.of(recipe)
+        val slot = slot<DiaryEntry>()
+        every { diaryRepo.save(capture(slot)) } answers { slot.captured.apply { id = 100L } }
+
+        val resp = service.addEntry(
+            "u@fittrack.pl", DiaryEntryRequest(
+                entryDate = LocalDate.now(),
+                mealType = "BREAKFAST",
+                recipeId = 50L,
+                quantityG = BigDecimal("100") // 100 = 1 porcja
+            )
+        )
+
+        assertEquals(0, BigDecimal("400").compareTo(resp.kcal))
+        assertEquals("Owsianka", resp.productName)
     }
 
     @Test

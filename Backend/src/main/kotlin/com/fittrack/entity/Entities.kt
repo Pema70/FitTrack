@@ -51,7 +51,7 @@ class DiaryEntry(
     @Column(name = "entry_date", nullable = false) var entryDate: LocalDate,
     @Column(name = "meal_type", nullable = false) var mealType: String,
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "product_id") var product: FoodProduct? = null,
-    @Column(name = "recipe_id") var recipeId: Long? = null,
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "recipe_id") var recipe: Recipe? = null,
     @Column(name = "custom_name") var customName: String? = null,
     @Column(name = "quantity_g", nullable = false, precision = 8, scale = 2) var quantityG: BigDecimal,
     @Column(nullable = false, precision = 8, scale = 2) var kcal: BigDecimal = BigDecimal.ZERO,

@@ -29,8 +29,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/api/\"")
-
+        buildConfigField("String", "API_BASE_URL", "\"https://fittrack-production-8b88.up.railway.app/api/\"")
+        // buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/api/\"")
         testInstrumentationRunner = "com.fittrack.ui.HiltTestRunner"
 
     }

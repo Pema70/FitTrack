@@ -1,6 +1,7 @@
 package com.fittrack.data.model
 
 import android.os.Parcelable
+import com.squareup.moshi.Json
 import kotlinx.parcelize.Parcelize
 
 // --- Auth ---
@@ -61,7 +62,8 @@ data class DailySummaryResponse(
 )
 
 data class DiaryEntryRequest(
-    val productId: Long,
+    val productId: Long? = null,
+    val recipeId: Long? = null,
     val quantityG: Double,
     val mealType: String,
     val entryDate: String
@@ -75,29 +77,36 @@ data class RecipeResponse(
     val id: Long,
     val title: String,
     val description: String?,
-    val kcalPerServing: Double,
-    val proteinG: Double,
-    val fatG: Double,
-    val carbsG: Double,
-    val prepTimeMin: Int?,
-    val servings: Int,
-    val imageUrl: String?,
-    val tags: List<String>,
-    val isFavorite: Boolean,
-    val isOwner: Boolean = false
+    val kcalPerServing: Double? = 0.0,
+    val proteinG: Double? = 0.0,
+    val fatG: Double? = 0.0,
+    val carbsG: Double? = 0.0,
+    val prepTimeMin: Int? = 0,
+    val servings: Int? = 1,
+    val imageUrl: String? = null,
+    val tags: List<String>? = emptyList(),
+    val isFavorite: Boolean? = false,
+    val isOwner: Boolean? = false
 ) : Parcelable
 
 data class RecipeRequest(
     val title: String,
     val description: String?,
-    val kcalPerServing: Double,
-    val proteinG: Double,
-    val fatG: Double,
-    val carbsG: Double,
-    val prepTimeMin: Int?,
+    val kcalPerServing: Double?,
+    val proteinG: Double?,
+    val fatG: Double?,
+    val carbsG: Double?,
+    val prepTimeMin: Int,
     val servings: Int,
     val imageUrl: String?,
-    val tags: List<String>
+    val tags: List<String>,
+    val ingredients: List<RecipeIngredientRequest> = emptyList()
+)
+
+data class RecipeIngredientRequest(
+    val productId: Long,
+    val quantityG: Double,
+    val unit: String? = "g"
 )
 
 // --- Workouts ---
@@ -125,5 +134,6 @@ data class ProductResponse(
     val kcalPer100g: Double,
     val proteinPer100g: Double,
     val fatPer100g: Double,
-    val carbsPer100g: Double
+    val carbsPer100g: Double,
+    val isRecipe: Boolean = false
 )

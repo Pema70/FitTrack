@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="activity_levels">
+        <item>Siedzący tryb życia</item>
+        <item>Lekko aktywny</item>
+        <item>Umiarkowanie aktywny</item>
+        <item>Bardzo aktywny</item>
+        <item>Ekstremalnie aktywny</item>
+    </string-array>
+
+    <string-array name="activity_levels_values">
+        <item>SEDENTARY</item>
+        <item>LIGHTLY_ACTIVE</item>
+        <item>MODERATELY_ACTIVE</item>
+        <item>VERY_ACTIVE</item>
+        <item>EXTRA_ACTIVE</item>
+    </string-array>
+</resources>
